@@ -3,7 +3,8 @@
 ## In English
 
 - At 2023-07-05, Lauri Ojansivu (https://github.com/xet7) asked his teacher Tapio Pärepalo,
-  and got permission to release this game as Open Source. We made this game at 1995.
+  and got permission to release this game as Open Source. We made this Amiga game with Blitz Basic 2 at 1995.
+  Some versions of Blitz Basic maybe runs also at Windows/Linux/Mac.
 - Code is at Aika/Code/Aikaar_V0.26.bb2
 - History: Lauri's family bought Amiga 500 at 1989 from Tapio,
   when Lauri was at 7th grade at secondary school. After that,
@@ -24,7 +25,8 @@
 ## Suomeksi (In Finnish)
 
 - 5.7.2023, Lauri Ojansivu (https://github.com/xet7) kysyi opettajaltaan Tapio Pärepalolta,
-  ja sai luvan julkaista tämän pelin avoimena lähdekoodina. Teimme tämän pelin vuonna 1995.
+  ja sai luvan julkaista tämän pelin avoimena lähdekoodina. Teimme tämän Amiga pelin vuonna 1995
+  Blitz Basic 2 ohjelmointikielellä. Jotkin Blitz Basic versiot ehkä toimii myös Windows/Linux/Mac koneissa.
 - Koodi on tiedostossa Aika/Code/Aikaar_V0.26.bb2
 - Historia: Laurin perhe osti Amiga 500 tietokoneen vuonna 1989 Tapiolta,
   kun Lauri oli 7:nnellä luokalla yläasteella. Sen jälkeen, Lauri oli lukiossa 1991-1994,
@@ -39,7 +41,7 @@
 - Ohjelmoitu tietokoneella Amiga 12000 680x0 vuonna 1995 käyttäen ohjelmointikieltä
   Blitz Basic 2 versio 2.10 . Ohjelmointikielen on tehnyt Acid Software, ja muokkaus ohjelmana SuperTED versio 2.52,
   jonka tietoja kohdassa on painike tekstinä "OKEE DOKEE".
-- Lauri Osti Blitz Basicin, se tuli isossa A4 kokoisessa laatikossa paikalliseen pankkiin Osuuspankki.
+- Lauri osti Blitz Basicin, se tuli isossa A4 kokoisessa laatikossa paikalliseen pankkiin Osuuspankki.
   Laatikko sisältää ison A4 kokoisen ohjekirjan ja diskettejä Amigalle, jossa Blitz Basic ja esimerkki koodeja.
 
 # Screenshot about game (Kuva pelistä)
