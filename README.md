@@ -4,6 +4,7 @@
 
 - At 2023-07-05, Lauri Ojansivu (https://github.com/xet7) asked his teacher Tapio Pärepalo,
   and got permission to release this game as Open Source. We made this game at 1995.
+- Code is at Aika/Code/Aikaar_V0.26.bb2
 - History: Lauri's family bought Amiga 500 at 1989 from Tapio,
   when Lauri was at 7th grade at secondary school. After that,
   Lauri was at high school at 1991-1994, where Tapio was Lauri's computer teacher.
@@ -24,6 +25,7 @@
 
 - 5.7.2023, Lauri Ojansivu (https://github.com/xet7) kysyi opettajaltaan Tapio Pärepalolta,
   ja sai luvan julkaista tämän pelin avoimena lähdekoodina. Teimme tämän pelin vuonna 1995.
+- Koodi on tiedostossa Aika/Code/Aikaar_V0.26.bb2
 - Historia: Laurin perhe osti Amiga 500 tietokoneen vuonna 1989 Tapiolta,
   kun Lauri oli 7:nnellä luokalla yläasteella. Sen jälkeen, Lauri oli lukiossa 1991-1994,
   kun Tapio oli Laurin tietokone opettajana. Lukiossa toisena vuonna, Lauri sai stipendin
