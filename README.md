@@ -1,6 +1,36 @@
 # Notegame - Aika-arvot
 
-## In English
+## Screenshot about game (Kuva pelistä)
+
+<img src="https://raw.githubusercontent.com/xet7/notegame/main/screenshot.jpg" width="100%" alt="Notegame screenshot" />
+
+## About Screenshot, In English
+
+- At top: Aika-arvot = Time values
+- Testailijan ala-aste 2c = Elementary school 2c of the tester. Lauri and Tapio made this game after high school.
+- Red background white note symbols have not been clicked yet. Green background note symbols have been clicked.
+- At left botton: Timer minutes:seconds that counts time used in game.
+- At middle bottom: 1/16 TAUKO = 1/16 pause.
+- Buttons at right bottom:
+  - Cheat
+  - Uusí pelaaja = New player
+  - Uusi peli = New game
+  - Lopeta = Quit
+
+## Tietoja kuvasta suomeksi (In Finnish)
+
+- Aika-arvot peli
+- Pelaajana Testailijan ala-asteelta 2c. Lauri ja Tapio teki tämän pelin Laurin Lukion jälkeen.
+- Punaisella taustalla valkoisia nuotti symboleita ei ole klikattu vielä. Vihreällä taustalla nuotti symboleita on klikattu.
+- Vasemmalla alhaalla: Aika laskuri minuutit:sekunnit joka laskee pelissä kuluneen ajan.
+- Keskellä alhaalla: 1/16 TAUKO. Sitä tekstiä vastaavaa nuotti symbolia pitäisi klikata.
+- Painikkeet oikealla alhaaalla:
+  - Cheat = Huijaa
+  - Uusi pelaaja
+  - Uusi peli
+  - Lopeta
+
+## About Game, In English
 
 - At 2023-07-05, Lauri Ojansivu (https://github.com/xet7) asked his teacher Tapio Pärepalo,
   and got permission to release this game as Open Source. We made this Amiga game with Blitz Basic 2 at 1995.
@@ -22,7 +52,7 @@
 - Lauri bought Blitz Basic, it came in big A4 size box to local bank Osuuspankki.
   Box contains big A4 size manual and floppy disks for Amiga, having Blitz Basic and example code.
 
-## Suomeksi (In Finnish)
+## Tietoja pelistä suomeksi (In Finnish)
 
 - 5.7.2023, Lauri Ojansivu (https://github.com/xet7) kysyi opettajaltaan Tapio Pärepalolta,
   ja sai luvan julkaista tämän pelin avoimena lähdekoodina. Teimme tämän Amiga pelin vuonna 1995
@@ -44,36 +74,6 @@
 - Lauri osti Blitz Basicin, se tuli isossa A4 kokoisessa laatikossa paikalliseen pankkiin Osuuspankki.
   Laatikko sisältää ison A4 kokoisen ohjekirjan ja diskettejä Amigalle, jossa Blitz Basic ja esimerkki koodeja.
 
-# Screenshot about game (Kuva pelistä)
-
-<img src="https://raw.githubusercontent.com/xet7/notegame/main/screenshot.jpg" width="100%" alt="Notegame screenshot" />
-
-## In English
-
-- At top: Aika-arvot = Time values
-- Testailijan ala-aste 2c = Elementary school 2c of the tester. Lauri and Tapio made this game after high school.
-- Red background white note symbols have not been clicked yet. Green background note symbols have been clicked.
-- At left botton: Timer minutes:seconds that counts time used in game.
-- At middle bottom: 1/16 TAUKO = 1/16 pause.
-- Buttons at right bottom:
-  - Cheat
-  - Uusí pelaaja = New player
-  - Uusi peli = New game
-  - Lopeta = Quit
-
-## Suomeksi (In Finnish)
-
-- Aika-arvot peli
-- Pelaajana Testailijan ala-asteelta 2c. Lauri ja Tapio teki tämän pelin Laurin Lukion jälkeen.
-- Punaisella taustalla valkoisia nuotti symboleita ei ole klikattu vielä. Vihreällä taustalla nuotti symboleita on klikattu.
-- Vasemmalla alhaalla: Aika laskuri minuutit:sekunnit joka laskee pelissä kuluneen ajan.
-- Keskellä alhaalla: 1/16 TAUKO. Sitä tekstiä vastaavaa nuotti symbolia pitäisi klikata.
-- Painikkeet oikealla alhaaalla:
-  - Cheat = Huijaa
-  - Uusi pelaaja
-  - Uusi peli
-  - Lopeta
-
 ## Related links (Aiheeseen kuuluvia linkkejä)
 
 - Blitz Basic 2 https://github.com/nitrologic/blitz2
@@ -83,10 +83,3 @@
 - Blitz Basic for some operating systems https://github.com/blitz-research
 - Newer AmiBlitz http://aminet.net/search?query=amiblitz
 - Wonkey, Blitz inspired new programming language https://github.com/wonkey-coders/wonkey
-
-
-
-
-
-
-
