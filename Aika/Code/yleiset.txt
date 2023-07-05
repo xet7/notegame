@@ -1,0 +1,19 @@
+80
+; Daynames
+Sunnuntai
+Maanantai
+Tiistai
+Keskiviikko
+Torstai
+Perjantai
+Lauantai
+; Gadgets.. maxchars 17
+Uusi pelaaja
+Uusi peli
+Lopeta
+Cheat
+; Menus
+Tiedosto
+Lataa uusi peli
+Tallenna kuvaruutu
+Lopeta
