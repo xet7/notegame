@@ -40,6 +40,42 @@
 - Lauri Osti Blitz Basicin, se tuli isossa A4 kokoisessa laatikossa paikalliseen pankkiin Osuuspankki.
   Laatikko sisältää ison A4 kokoisen ohjekirjan ja diskettejä Amigalle, jossa Blitz Basic ja esimerkki koodeja.
 
-# Screenshot
+# Screenshot about game (Kuva pelistä)
 
 <img src="https://raw.githubusercontent.com/xet7/notegame/main/screenshot.jpg" width="100%" alt="Notegame screenshot" />
+
+## In English
+
+- At top: Aika-arvot = Time values
+- Testailijan ala-aste 2c = Elementary school 2c of the tester. Lauri and Tapio made this game after high school.
+- Red background white note symbols have not been clicked yet. Green background note symbols have been clicked.
+- At left botton: Timer minutes:seconds that counts time used in game.
+- At middle bottom: 1/16 TAUKO = 1/16 pause.
+- Buttons at right bottom:
+  - Cheat
+  - Uusí pelaaja = New player
+  - Uusi peli = New game
+  - Lopeta = Quit
+
+## Suomeksi (In Finnish)
+
+- Aika-arvot peli
+- Pelaajana Testailijan ala-asteelta 2c. Lauri ja Tapio teki tämän pelin Laurin Lukion jälkeen.
+- Punaisella taustalla valkoisia nuotti symboleita ei ole klikattu vielä. Vihreällä taustalla nuotti symboleita on klikattu.
+- Vasemmalla alhaalla: Aika laskuri minuutit:sekunnit joka laskee pelissä kuluneen ajan.
+- Keskellä alhaalla: 1/16 TAUKO. Sitä tekstiä vastaavaa nuotti symbolia pitäisi klikata.
+- Painikkeet oikealla alhaaalla:
+  - Cheat = Huijaa
+  - Uusi pelaaja
+  - Uusi peli
+  - Lopeta
+
+
+
+
+
+
+
+
+
+
