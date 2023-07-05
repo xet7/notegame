@@ -72,8 +72,15 @@
   - Uusi peli
   - Lopeta
 
+## Related links (Aiheeseen kuuluvia linkkejä)
 
-
+- Blitz Basic 2 https://github.com/nitrologic/blitz2
+- Update to Blitz Basic 2 https://github.com/earok/chocolate_blitzbasic2
+- http://aminet.net/search?query=blitz+basic+2&sort=date&ord=DESC
+- Convert Blitz Basic 2 (Amiga) source to ASCII https://github.com/kuro68k/bb2ascii
+- Blitz Basic for some operating systems https://github.com/blitz-research
+- Newer AmiBlitz http://aminet.net/search?query=amiblitz
+- Wonkey, Blitz inspired new programming language https://github.com/wonkey-coders/wonkey
 
 
 
