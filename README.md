@@ -145,6 +145,18 @@ assign add blitzlibs: Work:Blitz2/blitzlibs
 assign add BL: blitlibs:
 assign add Aika: Work:Blitz2/Aika
 ```
+Or if you have the above in separate textfile like `aika.sh`, you can run that script with:
+```
+execute aika.sh
+```
+Or make it executeable with:
+```
+protect aika.sh +se
+```
+and then run it with
+```
+aika.sh
+```
 
 2. Start blitz2
 
