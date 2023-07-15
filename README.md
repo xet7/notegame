@@ -74,9 +74,85 @@
 - Lauri osti Blitz Basicin, se tuli isossa A4 kokoisessa laatikossa paikalliseen pankkiin Osuuspankki.
   Laatikko sisältää ison A4 kokoisen ohjekirjan ja diskettejä Amigalle, jossa Blitz Basic ja esimerkki koodeja.
 
+## Start to play game
+
+Note: There is game executeable `Aika-arvot` that has runner icon. (You do NOT need to compile from source code. You do NOT need to download Blitz Basic.)
+
+1.  From Shell (Workbehch:System/Shell or System:System/Shell) assign Aika: to your game directory
+```
+assign add Aika: Workbench:Aika
+```
+
+2. From Aika directory, double click `Aika-arvot`
+
+3. Load game from Volumes Aika:Pelit/Aika-arvot.GAME
+
+4. Write your name
+
+5. Write your school class, for example `2c` . Then timer starts running.
+
+6. Look at what is text at bottom middle like `KOKONUOTTI`, click that white note symbol at red background. You can use <a href="https://translate.google.com">Google Translate</a> to translate that Finnish to English.
+
+7. If it asks for number, like `27`, click that number
+
+8. If you don't know, click `Cheat`
+
+9. If you like to start with new player, click `Uusi pelaaja`
+
+10. If you like to start new game, click `Uusi peli`
+
+11. If you like to Quit, click `Lopeta`
+
+## Aloita pelata peliä
+
+Huom: Aika kansiossa on  `Aika-arvot` jolla on juoksija kuvate. (Et tarvitse kääntää lähdekoodista. Et tarvitse Blitz Basicia pelin pelaamiseen.)
+
+1. Amiga Shell komentoriviltä kirjoita (Workbench:System/Shell tai System:System/Shell) missä Aika kansio on, esim:
+
+```
+assign add Aika: Workbench:Aika
+```
+
+2. Aika kansiosta, kaksoisklikkaa `Aika-arvot`
+
+3. Lataa peli Volumes Aika:Pelit/Aika-arvot.GAME
+
+4. Kirjoita nimesi
+
+5. Kirjoita koulu luokkasi, esimerkiksi `2c` . Ajastin käynnistyy.
+
+6. Katso mikä teksti on keskellä alhaalla, esim. `KOKONUOTTI, klikkaa sitä valkoista nuotti symbolia punaisella taustalla.
+
+7. Jos se kysyy numeroa kuten `27`, klikkaa sitä numeroa
+
+8. Jos et tiedä, klikkaa `Cheat` jolla huijaat
+
+9. Jos haluat aloittaa uudella pelaajalla, klikkaa `Uusi pelaaja`
+
+10. Jos haluat aloittaa uuden pelin, klikkaa `Uusi peli`
+
+11. Jos halua lopettaa pelin, klikkaa `Lopeta`
+
+## Code
+
+Using Blitz Basic 2 https://github.com/nitrologic/blitz2
+
+1. Run these, or add them to your `s:user-startup`
+
+```
+assign add Blitz2: Work:Blitz2
+assign add blitzlibs: Work:Blitz2/blitzlibs
+assign add BL: blitlibs:
+assign add Aika: Work:Blitz2/Aika
+```
+
+2. Start blitz2
+
+3. Load code from at Aika:Code/Aikaar_V0.26.bb2
+
+
 ## Related links (Aiheeseen kuuluvia linkkejä)
 
-- Blitz Basic 2 https://github.com/nitrologic/blitz2
 - Update to Blitz Basic 2 https://github.com/earok/chocolate_blitzbasic2
 - http://aminet.net/search?query=blitz+basic+2&sort=date&ord=DESC
 - Convert Blitz Basic 2 (Amiga) source to ASCII https://github.com/kuro68k/bb2ascii
