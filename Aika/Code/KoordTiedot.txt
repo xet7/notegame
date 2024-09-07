@@ -1,0 +1,87 @@
+WBStartup
+WbToScreen 0
+
+#IDCMP_GADGETUP=$40
+#IDCMP_CLOSEGADGET=$200
+
+#B_X=1
+#B_Y=2
+#B_W=3
+#B_H=4
+#B_X_koordinaatteja=5
+#B_Y_koordinaatteja=6
+#B_Pelikertoja=7
+#B_MaxAika=8
+
+#B_MouseMove=9
+#B_MouseReSize=10
+#B_IFF_kuva=11
+#B_Tulosta=12
+#B_SuljeTulosruutu=13
+
+
+Borders On:BorderPens 1,2:Borders 4,2:GadgetJam 0
+StringGadget 3,247,13,0,#B_X,4,32
+StringGadget 3,247,26,0,#B_Y,4,32
+StringGadget 3,247,39,0,#B_W,4,32
+StringGadget 3,247,52,0,#B_H,4,32
+StringGadget 3,247,65,0,#B_X_koordinaatteja,4,32
+StringGadget 3,247,78,0,#B_Y_koordinaatteja,4,32
+StringGadget 3,247,91,0,#B_Pelikertoja,4,32
+StringGadget 3,247,104,0,#B_MaxAika,4,32
+
+
+BorderPens 2,1
+
+ButtonGroup 2
+TextGadget 3,8,13,512,#B_MouseMove=9,"Siirr hiirell"
+TextGadget 3,9,26,512,#B_MouseReSize,"Muuta kokoa"
+Toggle 3,#B_MouseReSize,On
+
+TextGadget 3,11,89,0,#B_IFF_kuva,"IFF-kuva"
+TextGadget 3,11,102,0,#B_Tulosta,"Tulosta"
+TextGadget 3,82,124,0,#B_SuljeTulosruutu,"Sulje tulosruutu"
+
+SizeLimits 32,32,-1,-1
+Window 3,307,30,294,143,$100A,"Koordinaatiston tiedot",1,2,3
+WLocate 224,4:WJam 0:WColour 1,0
+Print "X:"
+WLocate 224,17
+Print "Y:"
+WLocate 224,30
+Print "W:"
+WLocate 224,43
+Print "H:"
+WLocate 104,81
+Print "X-koordinaatteja:"
+WLocate 104,94
+Print "Y-koordinaatteja:"
+WLocate 143,56
+Print "Pelikertoja:"
+WLocate 167,69
+Print "Max aika:"
+
+Repeat
+  ev.l=WaitEvent
+  Select ev
+  Case #IDCMP_GADGETUP
+    Select GadgetHit
+    Case #B_X
+    Case #B_Y
+    Case #B_W
+    Case #B_H
+    Case #B_X_koordinaatteja
+    Case #B_Y_koordinaatteja
+    Case #B_Pelikertoja
+    Case #B_MaxAika
+
+    Case #B_MouseMove
+    Case #B_MouseReSize
+    Case #B_IFF_kuva
+    Case #B_Tulosta
+    Case #B_SuljeTulosruutu
+    End Select
+  Case #IDCMP_CLOSEGADGET:End
+  End Select
+Forever
+

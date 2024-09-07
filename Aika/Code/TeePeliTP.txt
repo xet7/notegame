@@ -1,0 +1,569 @@
+
+
+WBStartup:NoCli:CloseEd
+
+#cblack=1     ; black
+#cdgrey=5 ;2 ;6  ; grey
+#cblue=3      ; blue
+#cgreen=7     ; green
+#cdred=4      ; dark red
+#ctgrey=2  ;5 ; title gray
+#clgrey=0     ; light grey
+#cwhite=6 ;2  ; white
+
+#fonth=12
+
+;x=41 : y=37    ; button's picture starting coords
+#x2=0 : #y2=0   ; symbols in window 1!
+#x3=41 : #y3=46 ; window 1 coords
+
+#xsel1=483 : #ysel1=0 ; unselected button's coordinates in #nbitmap
+#xsel2=560 : #ysel2=0 ; selected button's coordinates in #nbitmap
+
+#sw=67       ; symbol width
+#sh=33       ;        height
+#xsd=69      ;        x distance in symbolspic
+#ysd=34      ;        y   -"-
+
+#xsdw=80     ; symbol x distance in window
+#ysdw=40     ;        y   -"-
+
+#gw=75       ; final gadget height
+#gh=37       ; final gadget width
+
+#g1begin=50  ; 50-78
+;#g2begin=100 ; 100-128
+
+;#background=0 ; background picture
+#allsymbols=1 ; all symbols in one shape
+#tbox1=2     ; unselected border shape (loaded before)
+;#tbox2=3     ; selected border shape (loaded before)
+#border=4    ; border for window
+#tborder=5   ; text border
+#tclock=6
+
+#rgbitmap=2   ; red symbol -> green symbol bitmap
+#nbitmap=1   ; temp bitmap where to get symbolpics
+
+;#tshape=9    ; symbolpic temp shape
+#pwin=4
+#scorelen=14  ; length of score entry
+#num=3        ; number of infos in people.person
+#extrapeople=200 ; how many players can play today
+#errhandler=Off
+
+#tborderx=201   ;21,24 ;title&symbolborders
+#tbordery=194
+
+#REQPOS_POINTER      =0
+#REQPOS_CENTERWIN    =1
+#REQPOS_CENTERSCR    =2
+#REQPOS_TOPLEFTWIN   =3
+#REQPOS_TOPLEFTSCR   =4
+
+#EZREQB_NORETURNKEY  =0
+#EZREQF_NORETURNKEY  =1 LSL #EZREQB_NORETURNKEY
+#EZREQB_LAMIGAQUAL   =1
+#EZREQF_LAMIGAQUAL   =1 LSL #EZREQB_LAMIGAQUAL
+#EZREQB_CENTERTEXT   =2
+#EZREQF_CENTERTEXT   =1 LSL #EZREQB_CENTERTEXT
+
+#SCREQB_SIZEGADS     =13
+#SCREQF_SIZEGADS     =1 LSL #SCREQB_SIZEGADS
+#SCREQB_DEPTHGAD     =14
+#SCREQF_DEPTHGAD     =1 LSL #SCREQB_DEPTHGAD
+#SCREQB_NONSTDMODES  =15
+#SCREQF_NONSTDMODES  =1 LSL #SCREQB_NONSTDMODES
+#SCREQB_GUIMODES     =16
+#SCREQF_GUIMODES     =1 LSL #SCREQB_GUIMODES
+#SCREQB_AUTOSCROLLGAD=18
+#SCREQF_AUTOSCROLLGAD=1 LSL #SCREQB_AUTOSCROLLGAD
+#SCREQB_OVERSCANGAD  =19
+#SCREQF_OVERSCANGAD  =1 LSL #SCREQB_OVERSCANGAD
+
+NEWTYPE .ezrequest
+  size.l:flags.l:title$:mess$:gad$
+End NEWTYPE
+
+NEWTYPE.TA
+  ta_Name.s
+  ta_YSize.w
+  ta_Style.b
+  ta_Flags.b
+End NEWTYPE
+
+NEWTYPE.MyScreenMode
+  DisplayID.l
+  DisplayWidth.w
+  DisplayHeight.w
+  DisplayDepth.w
+  OverscanType.w
+  AutoScroll.l
+End NEWTYPE
+
+NEWTYPE.symbol
+  SymbolOrder.q       ; symbol numbers in random order
+  AskingOrder.q       ; asking order
+  txt$                ; symbol text
+  ;w.l                 ; symbol text's width in pixels
+  x.w                 ; symbol x coord in symbolwindow
+  y.w                 ;        y
+End NEWTYPE
+
+NEWTYPE.winitems
+  no.q    ; windownumber
+  x.w
+  y.w
+  w.w     ; width
+  h.w     ; height
+End NEWTYPE
+
+NEWTYPE.gad
+  x.w
+  y.w
+  id.w
+  txt$
+End NEWTYPE
+
+
+
+CNIF #errhandler=On
+  DEFTYPE .ezrequest errz
+
+  SetErr
+    PutReg d0,err.l
+    err$=Mki$(40)+Chr$(12)+Peek$(err)+Mki$(0)
+    DisplayAlert_ 0,&err$,20:End
+  End SetErr
+CEND
+
+
+
+Dim g.gad(4)
+Dim s.symbol(28)
+Dim List temp.w(28)     ; temp list for .randomlist
+;Dim List people.person(#extrapeople+extratest)
+
+DEFTYPE.MyScreenMode *mysm
+
+DEFTYPE.TA *mytext
+
+DEFTYPE.s source,dest,koulu,screentitle,fi,filename
+DEFTYPE.winitems picw,symbolw,textw,titlew
+DEFTYPE.w count,x,y,i,t,errors,scounter,pen1,pen2,minutes,seconds
+DEFTYPE.w numpeople,numresults
+; temp variables (errors = wrong hits)
+DEFTYPE.l Sekunti,Mikrosek,NSekunti,NMikrosek,dummy,ev
+DEFTYPE.b exit,clockon,symbolwopen,doR2G
+
+MaxLen fi$=108
+screentitle$="Valintapelien symbolien tekstinteko-ohjelma "+Chr$(169)+" Lauri Ojansivu"
+
+g(1)\x=491,194,50,"      Ohje      "  ; 242
+g(2)\x=491,218,51,"  Tallenna peli  "
+g(3)\x=491,230,52,"      Lopeta     "
+;g(4)\x=491,206,53,"  Tallenna peli  "
+
+If ExecVersion<36
+  pen1=#ctgrey
+  pen2=#cblack ; DPen & BPen for KS1.3
+Else
+  pen1=#cblack
+  pen2=#ctgrey ; DPen & BPen for KS2.x
+EndIf
+
+
+;Borders 4,2 : BorderPens pen1,pen2
+;StringGadget #pwin,140,30,0,1,30,240
+;StringGadget #pwin,140,50,0,2,4,32
+;Borders 8,4 : BorderPens pen2,pen1
+;TextGadget #pwin,250,100,0,3," ALOITA PELI "
+
+;MenuTitle 0,0,"Tiedosto"
+;MenuItem 0,0,0,0,"Lataa uusi peli"
+;MenuItem 0,0,0,1,"Tallenna kuvaruutu"
+;MenuItem 0,0,0,2,"Lopeta"
+
+
+LoadShape #tbox1,"Aika:Data/AIKAAR.boxbrush_X"
+;LoadShape #tbox2,"Aika:Data/AIKAAR.boxbrush2_2"
+LoadShape #border,"Aika:Data/symbolborder.brush_X"
+LoadShape #tborder,"Aika:Data/textborder.brush_X"
+LoadShape #tclock,"Aika:Data/Clock.brush_X"
+LoadPalette 0,"Aika:Data/Peli.palette"
+;LoadShapes 10,38,"Tempdisk:Shapes.Inc"
+; AutoCookie defaults on, no need to MakeCookie :)
+
+picw\no=0,0,11,640,245
+symbolw\no=0,41,41-11,555,157
+textw\no=0,#tborderx+4,#tbordery+2,ShapeWidth(#tborder)-8,ShapeHeight(#tborder)-5 ;226,44
+titlew\no=0,10,4,620,16   ; 3,10,15,620,16
+
+
+
+;LoadSound 1,"Aika:Data/jeah.sample"
+;LoadSound 2,"Aika:Data/oho.sample"
+
+LoadFont 2,"Aika:fonts/LED2.font",30
+LoadFont 1,"Aika:fonts/Gill.font",16
+LoadFont 0,"Aika:fonts/newtopaz.font",8
+
+WBenchToFront_
+WbToScreen 0
+
+
+RTEZSetDefaultDirectory 0,"Aika:Pelit"
+RTEZSetDefaultDirectory 1,"Aika:Pelit"
+; 0 LoadFile
+; 1 SaveFile
+; 2 PathRequest
+; 3 MultiLoadFile
+RTEZSetPattern 0,"#?.GFX"
+temp$=RTEZLoadFile("Valitse pelikuva","")
+If temp$="" Then End
+filename$=Left$(temp$,Len(temp$)-4)
+
+If ReadFile(0,filename$+".GAME")
+  FileInput 0
+  maxsymbols=Edit(50)
+  For i=0 To 27
+    s(i)\txt=Edit$(50)
+  Next
+  CloseFile 0
+Else
+  maxsymbols=28
+EndIf
+
+
+LoadShape #allsymbols,filename$+".GFX"
+BitMap #nbitmap,640,256,3 ;ILBMDepth
+Blit #allsymbols,0,0
+
+For t=0 To 3:For i=0 To 6
+    s(count)\x=#x2+i*#xsdw,#y2+t*#ysdw
+    GetaShape count+#g1begin,i*#xsd,t*#ysd,#sw,#sh
+    count+1
+Next i,t
+
+;For t=0 To 3:For i=0 To 6
+;    s(count)\x=#x2+i*#xsdw,#y2+t*#ysdw
+;    GetaShape count+#g1begin,i*#xsd,t*#ysd,#sw,#sh
+;    If count=maxsymbols
+;      t=4:i=7
+;    EndIf
+;    count+1
+;Next i,t
+
+Free BitMap #nbitmap
+
+
+
+.Statements
+
+
+Statement SymbolR2G{hit} ; Red2Green
+  Use BitMap #rgbitmap
+  Blit #g1begin+hit,0,0
+  ;For x=0 To #sw:For y=0 To #sh
+  ;  If Point(x,y)=#cdred Then Plot x,y,#cgreen
+  ;Next y,x
+  ReMap #cdred,#cgreen,#rgbitmap
+End Statement
+
+Statement updatetext{txt$}
+  SHARED textw
+  USEPATH textw
+  Use Window \no
+  WindowFont 1
+  rp.l=RastPort(\no)
+  txtl.l=Len(txt$)
+  twolines=Instr(txt$,"\")
+  WBox \x,\y,\x+\w,\y+\h,#clgrey
+  WColour #cblack,#clgrey
+  ;win.l=Peek.l(Addr Window(0))
+  If twolines
+    txt1$=Left$(txt$,twolines-1)
+    txt2$=Right$(txt$,txtl-twolines)
+    txtl1.l=Len(txt1$)
+    txtl2.l=Len(txt2$)
+    txtpix1.l=TextLength_(rp,txt1$,txtl1)
+    txtpix2.l=TextLength_(rp,txt2$,txtl2)
+    WLocate \x+Int((\w-txtpix1)/2),\y+6  ; 13 ;217
+    Print txt1$
+    WLocate \x+Int((\w-txtpix2)/2),\y+#fonth+12 ;-((\h-2*#fonth)/3+#fonth)
+    Print txt2$
+  Else
+    txtpix.l=TextLength_(rp,txt$,txtl)
+    WLocate \x+Int((\w-txtpix)/2),\y+Int((\h-#fonth)/2)
+    Print txt$
+  EndIf
+End Statement
+
+Statement updatetitle{txt$} ; update title above symbolpics
+  SHARED titlew
+  USEPATH titlew : Use Window \no : WindowFont 1
+  rp.l=RastPort(\no)
+  txtl.l=Len(txt$)
+  ;win.l=Peek.l(Addr Window(0))
+  txtpix.l=TextLength_(rp,txt$,txtl)
+  WColour #cwhite,#cgreen
+  WBox \x,\y,\x+\w,\y+\h,#cgreen
+  ;InnerCls #cgreen
+  ; fonth=13  ; can be used in this statement if needed
+  WLocate \x+Int((\w-txtpix)/2),\y+Int((\h-#fonth)/2)  ; 13 ;217
+  Print txt$ ;+Str$(test.l)
+End Statement
+
+
+;    bodytext$=player$+" "+\luokka+" "
+;    bodytext$+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+;    bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)+Chr$(10)
+;    bodytext$+"Aika: "+UStr$(\minutes)+" min "+UStr$(\seconds)+" sek "+Chr$(10)
+;    bodytext$+"Virheit: "+UStr$(\errors)
+
+;Statement getplayer2{}
+;  SHARED symbolw,init,pen1,pen2,clockon,dummy,player$,luokka$
+;  USEPATH symbolw
+;  Window #pwin,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,#pwin
+;  WindowFont 0 : WJam 0 : WColour #cgreen
+;  WLocate 3,10 : Print Centre$("Uuden pelaajan valinta",70)
+;  WColour #cblack
+;  WLocate 60,32 : Print "  Nimi:"
+;  WLocate 60,52 : Print "Luokka:"
+;  ClearString #pwin,1
+;  ClearString #pwin,2
+;  Redraw #pwin,2
+;  ActivateString #pwin,1
+;
+;  exit.b=False
+;  Repeat
+;    ev.l=WaitEvent
+;    Select ev.l
+;    Case 64 ; gadget up
+;      Select GadgetHit
+;        Case 1
+;          player$=StringText$(#pwin,1)
+;          ;Redraw #pwin,1
+;          ActivateString #pwin,2
+;        Case 2
+;          luokka$=StringText$(#pwin,2)
+;          Redraw #pwin,2
+;      End Select
+;    End Select
+;  Until GadgetHit=3
+;  CloseWindow #pwin
+;
+;End Statement
+
+;.Functions
+;
+;Function.l lrequest{Title$,BodyText$,GadgetText$}
+;  ret.l=RTEZRequest(Title$,BodyText$,GadgetText$)
+;
+;  Function Return ret.l
+;End Function
+;
+;
+;Function$ {Title$,BodyText$,MaxChars.w}
+;  ;Title$,BodyText$,MaxChars.w,[DefaultString]
+;  While sRet$=""
+;    sRet$=RTEZGetString(Title$,BodyText$,MaxChars.w)
+;
+;    If sRet$=""
+;      ret=RTEZRequest("Hupsis","Sinun tytyy kirjoittaa jotain!","Yritn uudestaan")
+;    Else
+;      ;bodytext$="Kirjoitit '"+sRet$+"'"
+;      ;ret=RTEZRequest("RTEZGetString",bodytext$,"I Sure Did")
+;    EndIf
+;  Wend
+;  Function Return sRet$
+;End Function
+;
+;Function$ LoadFile{}
+;  name$=RTEZLoadFile("Pick a File",fi$)
+;
+;  While name$=""
+;    ;If name$<>""
+;    ;  bodytext$="You picked '"+name$+"'"
+;    ;  ret=RTEZRequest("Request",bodytext$,"How True")
+;    ;Else
+;      ret=RTEZRequest("Request","You didn't pick a file","S_o What?")
+;    ;EndIf
+;    name$=RTEZLoadFile("Pick a File",fi$)
+;  Wend
+;
+;  Function Return name$
+;End Function
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; calculate button image (inside click image)
+;; and button click coordinates
+;;
+;      NO BITMAP TRICKS -> SAVE TIME
+;
+;BitMap #nbitmap,640,256,3 ;ILBMDepth
+;Use BitMap #nbitmap
+;Blit #allsymbols,0,0
+;
+;Use BitMap #nbitmap
+
+BitMap #rgbitmap,#sw,#sh,3
+
+
+
+
+USEPATH symbolw      ;  CloseWindow \no
+
+; first gadget is first item in SymbolOrder table
+Borders On : Borders 5,5 : BorderPens pen2,pen1
+For i=0 To maxsymbols-1
+  ShapeGadget \no,s(i)\x+\x,s(i)\y+\y,0,i,#tbox1     ;,#g1begin+i,#g2begin+i
+  ;SetZone \no,s(s(i)\SymbolOrder)\x,s(s(i)\SymbolOrder)\y,s(s(i)\SymbolOrder)\x+#sw,s(s(i)\SymbolOrder)\y+#sh
+Next
+
+GadgetJam 1 ;:GadgetPens pen1,pen2
+Borders On
+Borders 2,2   ;14,5
+BorderPens pen2,pen1
+
+For i=1 To 3:TextGadget picw\no,g(i)\x,g(i)\y,0,g(i)\id,g(i)\txt:Next
+
+
+
+
+
+Screen 1,0,0,640,256,3,$8000,screentitle$,pen1,pen2
+;ILBMDepth,ILBMViewmode=Hires nolace!
+; 0,11,screentitle$ ; 3 bitplanes (=16 vri) + 8 (=hires) = 11
+
+;For i=0 To 15:RGB i,0,0,0:Next
+Use Palette 0
+
+.windows
+
+DefaultIDCMP $8|$10|$20|$40|$200|$400
+USEPATH picw
+Window \no,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,\no ; 3,4 ; gadgets
+
+CatchDosErrs
+WBlit #border,0,0         ;21,24    ;title&symbolborders
+WBlit #tborder,#tborderx,#tbordery
+
+
+USEPATH symbolw
+Borders On : Borders 5,5 : BorderPens pen2,pen1
+For i=0 To 27
+  ShapeGadget \no,s(i)\x,s(i)\y,0,i,#tbox1     ;,#g1begin+i,#g2begin+i
+Next
+
+;Window \no,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,\no
+
+;For i=0 To 27
+;  WBlit #g1begin+i,s(i)\x+4,s(i)\y+2
+;Next
+
+;For i=0 To 27
+;  WBlit #g1begin+i,s(i)\x+4+\x,s(i)\y+2+\y
+;Next
+
+USEPATH symbolw
+
+NOpenFile \no,On
+
+
+For i=0 To 27
+  If s(i)\txt<>""
+    SymbolR2G{i}
+    BitMaptoWindow #rgbitmap,symbolw\no,0,0,s(i)\x+4+\x,s(i)\y+2+\y,#sw,#sh
+  Else
+    WBlit #g1begin+i,s(i)\x+4+\x,s(i)\y+2+\y
+  EndIf
+Next
+
+
+
+ScreensBitMap 1,0
+Use BitMap 0
+FloodFill 0,50,#cblue
+FreeFill
+Use Window \no
+
+NOpenFile \no,Off
+
+Gosub ohje
+
+.main
+exit=False
+
+Repeat
+  ; wait for something to happen..
+  ev=WaitEvent
+  Select ev
+  Case 64 ; gadget up
+    Select GadgetHit
+    Case 50 : Gosub ohje
+    Case 51 : Gosub savegame
+    Case 52 : exit=True
+    Default
+      hit=GadgetHit:Gosub getname
+    End Select
+  End Select
+
+Until exit.b=True
+
+End
+
+.getname
+  updatetext{s(hit)\txt}
+  BodyText$="Kirjoita valitsemasi symbolin nimi"
+  s(hit)\txt=RTEZGetString("Tietoa",BodyText$,30,s(hit)\txt)
+
+  USEPATH symbolw
+  If s(hit)\txt<>""
+    SymbolR2G{hit}
+    BitMaptoWindow #rgbitmap,symbolw\no,0,0,s(hit)\x+4+\x,s(hit)\y+2+\y,#sw,#sh
+    updatetext{s(hit)\txt}
+  EndIf
+Return
+
+.savegame
+If WriteFile(0,filename$+".GAME")
+  FileOutput 0
+  maxsymbols=0
+  For i=0 To 27
+    If s(i)\txt=""
+      i=27
+    Else
+      maxsymbols+1
+    EndIf
+  Next
+  NPrint maxsymbols
+  For i=0 To maxsymbols
+    NPrint s(i)\txt
+  Next
+  CloseFile 0
+EndIf
+Return
+
+.ohje
+bodytext$="Vrien merkitykset:"+Chr$(10)+Chr$(10)
+bodytext$+"PUNAINEN symboli = symbolilla ei ole nime"+Chr$(10)
+bodytext$+"VIHRE symboli   = symbolilla on nimi"+Chr$(10)+Chr$(10)
+bodytext$+"Toiminta:"+Chr$(10)+Chr$(10)
+bodytext$+"Kun valitset symbolin, eteesi tulee tekstinsyttlaatikko,"+Chr$(10)
+bodytext$+"johon voit kirjoittaa symbolin nimen. Jos symbolilla on jo"+Chr$(10)
+bodytext$+"nimi, se nkyy tekstinsyttlaatikossa ja voit muuttaa sit."+Chr$(10)+Chr$(10)
+bodytext$+"Jos haluamasi teksti ei sovi yhdelle riville kyselyruutuun,"+Chr$(10)
+bodytext$+"voit jakaa sen kahdelle riville \ merkill esim. nin:"+Chr$(10)+Chr$(10)
+bodytext$+"              TSS ON TOSI\PITK TEKSTI"+Chr$(10)+Chr$(10)
+bodytext$+"Symbolien numerointi menee vasemmalta oikealle ja ylhlt alas."+Chr$(10)
+bodytext$+"Kun tallennettaessa tulee kohdalle symboli, jolla ei ole nime,"+Chr$(10)
+bodytext$+"tallennus lopetetaan sen kohdalle, jolloin ylimriset symbolit"+Chr$(10)
+bodytext$+"eivt lataudu peliin."
+
+ret=RTEZRequest("Ohje",bodytext$,"_OK")
+Return
+
+

@@ -1,0 +1,1114 @@
+WBStartup:NoCli
+
+;#cblack=1     ; black
+;#cdgrey=5 ;2 ;6  ; grey
+;#cblue=3      ; blue
+;#cgreen=7     ; green
+;#cdred=4      ; dark red
+;#ctgrey=2  ;5 ; title gray
+;#clgrey=0     ; light grey
+;#cwhite=6 ;2  ; white
+
+#cdgrey=0
+#cwhite=2
+#cblack=1
+#cblue=3
+
+
+#fontw=8:#fonth=8
+
+#scorelen=14  ; length of score entry
+#num=3        ; number of infos in people.person
+#extrapeople=200 ; how many players can play today
+
+
+#addproph=16          ; PropGadgettia alaspin
+;#textdown=0           ; koko tekstialuetta alaspin
+;#downpix=8*#textdown
+#downpix=0
+numchars=74
+TextX=8:TextY=12+#downpix
+
+numgames.w=10  ; number of games played ; 50
+maxtime.w=160   ; how much time used ; 40+2
+
+num_xcoords=10  ; how many coords in axels
+num_ycoords=10
+
+
+
+If ExecVersion<36
+  pen1=#cdgrey
+  pen2=#cblack ; DPen & BPen for KS1.3
+Else
+  pen1=#cblack
+  pen2=#cdgrey ; DPen & BPen for KS2.x
+EndIf
+
+#errhandler=Off
+CNIF #errhandler=On
+  NEWTYPE .ezrequest
+    size.l:flags.l:title$:mess$:gad$
+  End NEWTYPE
+
+  DEFTYPE .ezrequest errz
+
+  SetErr
+    PutReg d0,err.l
+    err$=Mki$(40)+Chr$(12)+Peek$(err)+Mki$(0)
+    DisplayAlert_ 0,&err$,20:End
+  End SetErr
+CEND
+
+
+#REQPOS_POINTER      =0
+#REQPOS_CENTERWIN    =1
+#REQPOS_CENTERSCR    =2
+#REQPOS_TOPLEFTWIN   =3
+#REQPOS_TOPLEFTSCR   =4
+
+#EZREQB_NORETURNKEY  =0
+#EZREQF_NORETURNKEY  =1 LSL #EZREQB_NORETURNKEY
+#EZREQB_LAMIGAQUAL   =1
+#EZREQF_LAMIGAQUAL   =1 LSL #EZREQB_LAMIGAQUAL
+#EZREQB_CENTERTEXT   =2
+#EZREQF_CENTERTEXT   =1 LSL #EZREQB_CENTERTEXT
+
+#SCREQB_SIZEGADS     =13
+#SCREQF_SIZEGADS     =1 LSL #SCREQB_SIZEGADS
+#SCREQB_DEPTHGAD     =14
+#SCREQF_DEPTHGAD     =1 LSL #SCREQB_DEPTHGAD
+#SCREQB_NONSTDMODES  =15
+#SCREQF_NONSTDMODES  =1 LSL #SCREQB_NONSTDMODES
+#SCREQB_GUIMODES     =16
+#SCREQF_GUIMODES     =1 LSL #SCREQB_GUIMODES
+#SCREQB_AUTOSCROLLGAD=18
+#SCREQF_AUTOSCROLLGAD=1 LSL #SCREQB_AUTOSCROLLGAD
+#SCREQB_OVERSCANGAD  =19
+#SCREQF_OVERSCANGAD  =1 LSL #SCREQB_OVERSCANGAD
+
+
+
+; []----------------------------------------------------------------------[]
+; |               (C) 1993 Tim Caldwell. All rights reserved.              |
+; |                                                                        |
+; |          File: Intuition.bbi                                           |
+; |        Author: Tim Caldwell                                            |
+; | Modifications: Sun 10.10.93  Created                                   |
+; []----------------------------------------------------------------------[]
+
+.flags
+
+
+; ** Intuition window flags
+; **
+#WFLG_SIZEGADGET      = $00000001     ; Flags resquested with OpenWindow
+#WFLG_DRAGBAR         = $00000002
+#WFLG_DEPTHGADGET     = $00000004
+#WFLG_CLOSEGADGET     = $00000008
+#WFLG_SIZEBRIGHT      = $00000010
+#WFLG_SIZEBBOTTOM     = $00000020
+
+#WFLG_REFRESHBITS     = $000000C0     ; Refresh modes
+#WFLG_SMART_REFRESH   = $00000000
+#WFLG_SIMPLE_REFRESH  = $00000040
+#WFLG_SUPER_BITMAP    = $00000080
+#WFLG_OTHER_REFRESH   = $000000C0
+
+#WFLG_BACKDROP        = $00000100
+#WFLG_REPORTMOUSE     = $00000200
+#WFLG_GIMMEZEROZERO   = $00000400
+#WFLG_BORDERLESS      = $00000800
+#WFLG_ACTIVATE        = $00001000
+
+#WFLG_RMBTRAP         = $00010000     ; Other user flags
+#WFLG_NOCAREREFRESH   = $00020000
+#WFLG_NW_EXTENDED     = $00040000     ; V36
+#WFLG_NEWLOOKMENUS    = $00200000     ; V39
+
+#WFLG_WINDOWACTIVE    = $00002000     ; Flags set by Intuition. DO NOT USE !
+#WFLG_INREQUEST       = $00004000
+#WFLG_MENUSTATE       = $00008000
+#WFLG_WINDOWREFRESH   = $01000000
+#WFLG_WBENCHWINDOW    = $02000000
+#WFLG_WINDOWTICKED    = $04000000
+#WFLG_VISITOR         = $08000000     ; V36
+#WFLG_ZOOMED          = $10000000     ; V36
+#WFLG_HASZOOM         = $20000000     ; V36
+
+
+; ** Intuition window IDCMP flags
+; **
+#IDCMP_SIZEVERIFY     = $00000001
+#IDCMP_NEWSIZE        = $00000002
+#IDCMP_REFRESHWINDOW  = $00000004
+#IDCMP_MOUSEBUTTONS   = $00000008
+#IDCMP_MOUSEMOVE      = $00000010
+#IDCMP_GADGETDOWN     = $00000020
+#IDCMP_GADGETUP       = $00000040
+#IDCMP_REQSET         = $00000080
+#IDCMP_MENUPICK       = $00000100
+#IDCMP_CLOSEWINDOW    = $00000200
+#IDCMP_RAWKEY         = $00000400
+#IDCMP_REQVERIFY      = $00000800
+#IDCMP_REQCLEAR       = $00001000
+#IDCMP_MENUVERIFY     = $00002000
+#IDCMP_NEWPREFS       = $00004000
+#IDCMP_DISKINSERTED   = $00008000
+#IDCMP_DISKREMOVED    = $00010000
+#IDCMP_WBENCHMESSAGE  = $00020000     ; ** RESERVED **
+#IDCMP_ACTIVEWINDOW   = $00040000
+#IDCMP_INACTIVEWINDOW = $00080000
+#IDCMP_DELTAMOVE      = $00100000
+#IDCMP_VANILLAKEY     = $00200000
+#IDCMP_INTUITICKS     = $00400000
+#IDCMP_IDCMPUPDATE    = $00800000     ; V36
+#IDCMP_MENUHELP       = $01000000     ; V36
+#IDCMP_CHANGEWINDOW   = $02000000     ; V36
+#IDCMP_GADGETHELP     = $04000000     ; V39
+#IDCMP_LONELYMESSAGE  = $80000000     ; ** RESERVED **
+
+#A_Esc=$45       ; Exit code
+
+#A_Up=$4C        ; Place
+#A_Down=$4D
+#A_Left=$4F
+#A_Right=$4E
+
+#S_Up=$3E
+#S_Down=$1E
+#S_Left=$2D
+#S_Right=$2F
+
+#S_UpLeft=$3D     ; Size
+#S_UpRight=$3F
+#S_DownLeft=$1D
+#S_DownRight=$1F
+#S_Center=$2E
+
+
+
+.newtypes
+
+
+NEWTYPE.TA
+  ta_Name.s
+  ta_YSize.w
+  ta_Style.b
+  ta_Flags.b
+End NEWTYPE
+
+NEWTYPE.MyScreenMode
+  DisplayID.l
+  DisplayWidth.w
+  DisplayHeight.w
+  DisplayDepth.w
+  OverscanType.w
+  AutoScroll.l
+End NEWTYPE
+
+NEWTYPE.winitems
+  no.q    ; windownumber
+  x.w
+  y.w
+  w.w     ; width
+  h.w     ; height
+End NEWTYPE
+
+NEWTYPE.gad
+  x.w
+  y.w
+  id.w
+  txt$
+End NEWTYPE
+
+NEWTYPE .person
+  info$[3]
+  ;-name$        ; player name                      30 chars
+  ;-numscores.w
+  ;-hiscores$    ; #
+  ;luokka$      ;                                   4
+
+  ;err.w      ; over 32000 ;) hmm, 3200           5
+  ;seconds.w  ; 0-59 how much time used in game   3
+  ;minutes.w  ; 0-59                              3
+  ;thour.b    ; 0-23                              3
+  ;tmin.b     ; 0-59                              3
+  ;tdate.b    ; 1-31                              3
+  ;tmonth.b   ; 1-12                              3
+  ;tyear.w     ; 1995                              5
+
+  txt$ ; txt to display in listview (name + latest playinfo)
+
+  selected.b      ; selected to delete? etc..
+
+  luokka$
+  errors.w
+  minutes.w:seconds:thour:tmin:twday:tdate:tmonth
+  tyear.w
+
+  listsort.l      ; sort field .w or .l
+End NEWTYPE
+
+;NEWTYPE.playinfo
+;  luokka$
+;  errors.w
+;  minutes.w:seconds:thour:tmin:twday:tdate:tmonth
+;  tyear.w
+;End NEWTYPE
+;
+;DEFTYPE.playinfo p
+
+NEWTYPE.coorditem
+  x.q:y
+End NEWTYPE
+
+Dim day$(7):Restore daynames:For i=0 To 6:Read day$(i):Next
+;Dim mon$(12):Restore monthnames:For i=1 To 12:Read mon$(i):Next
+
+DEFTYPE.MyScreenMode *mysm
+
+DEFTYPE.TA *mytext
+
+DEFTYPE.s source,dest,koulu,screentitle,fi,filename
+DEFTYPE.w count,x,y,i,t,errors,scounter,pen1,pen2,minutes,seconds
+DEFTYPE.w numpeople,numresults,maxsymbols
+; temp variables (errors = wrong hits)
+DEFTYPE.l Sekunti,Mikrosek,NSekunti,NMikrosek,dummy,ev
+DEFTYPE.b exit,clockon,symbolwopen,doR2G
+DEFTYPE.winitems win,twin,cwin
+   ; twin = real window coordinates
+   ; cwin = coordinate system axels coordinates
+;twin\x=10,20,600,200
+
+cwin\x=50,40,540,160
+
+
+MaxLen fi$=108
+screentitle$="Valintapelin tuloseditori v 0.01 by Lauri Ojansivu" ;"+Chr$(169)+"
+
+koulu$="Testailijan ala-aste"
+
+
+
+.coodfuncs
+
+Function cx2wx{x}                 ; my coord x -> window x
+  SHARED cwin,cxw
+  Function Return x*cxw+cwin\x
+End Function
+
+Function cy2wy{y}                 ; my coord y -> window y
+  SHARED cwin,cyh
+  Function Return y*cyh+cwin\y
+End Function
+
+Function wx2cx{x}                ; window x -> my coord x
+  SHARED cwin,cxw
+  ;x+1
+  Function Return (x-cwin\x)/cxw+1
+End Function
+
+Function wy2cy{y}                ; window y -> my coord y
+  SHARED cwin,cyh,maxtime
+  Function Return Abs((y-cwin\y)/cyh-maxtime) ; sama kuin (wy2cy{y}-40)*-1
+End Function                              ; Abs= *-1
+
+Statement cline{x1,y1,x2,y2,col.b}      ; my coord line -> window x1y1x2y2 line
+  SHARED cwin,cxw,cyh
+  x1-1:x2-1   ; draw always from previous point to current point
+  Wline cwin\x+x1*cxw,cwin\h-y1*cyh,cwin\x+x2*cxw,cwin\h-y2*cyh,col
+End Statement
+
+
+
+
+
+WBenchToFront_
+WbToScreen 0
+RTEZSetDefaultDirectory 0,"Aika:Pelit"
+RTEZSetDefaultDirectory 1,"Aika:Pelit"
+; 0 LoadFile
+; 1 SaveFile
+; 2 PathRequest
+; 3 MultiLoadFile
+RTEZSetPattern 0,"#?.HISCORE"
+
+;temp$=RTEZLoadFile("Valitse tulostiedosto","")
+temp$="Aika:Pelit/Aika-arvot.HISCORE"
+filename$=Left$(temp$,Len(temp$)-8)
+
+; load hiscores
+If OpenFile(0,filename$+".HISCORE")
+   FileInput 0
+   numpeople=Val(Edit$(5))
+   Dim List people.person(numpeople+#extrapeople)
+
+   ClearList people()
+   ResetList people()
+
+   USEPATH people()
+   While NOT Eof(0)
+     If AddLast(people())
+       \info[0]=Edit$(30)
+       \info[1]=Inkey$(2)
+       \info[2]=Inkey$((Cvi(\info[1]))*#scorelen)
+       ;temp$=Edit$(1) ; enter character not needed
+     EndIf
+   Wend
+   WindowOutput 0
+   CloseFile 0
+   ResetList people()
+Else
+   End
+   ;Dim List people.person(#extrapeople)
+EndIf
+
+; StringSort
+; ListBase
+; StringSortItem
+;  SortList
+
+Statement GetInfo{numrec.w}
+    SHARED people(),bodytext$,day$()       ;,numpeople,p
+    maxitems.w=Cvi(people()\info[1])
+    If numrec<1 OR numrec>maxitems
+      numrec=maxitems
+    EndIf
+    info$=Mid$(people()\info[2],(#scorelen*(numrec-1))+1,#scorelen)
+
+    USEPATH people()
+    \luokka=Mid$(info$,1,3)
+    \errors=Cvi(Mid$(info$,4,2))
+    \minutes=Asc(Mid$(info$,6,1))
+    \seconds=Asc(Mid$(info$,7,1))
+    \thour=Asc(Mid$(info$,8,1))
+    \tmin=Asc(Mid$(info$,9,1))
+    \twday=Asc(Mid$(info$,10,1))
+    \tdate=Asc(Mid$(info$,11,1))
+    \tmonth=Asc(Mid$(info$,12,1))
+    \tyear=Cvi(Mid$(info$,13,2))
+
+;.hum2
+;  For numrec=1 To Cvi(\info[1])
+;    info$=Mid$(people()\info[2],(#scorelen*(numrec-1))+1,#scorelen)
+;    \errors=Cvi(Mid$(info$,4,2))
+;    \minutes=Asc(Mid$(info$,6,1))
+;    \seconds=Asc(Mid$(info$,7,1))
+;
+;  Next
+
+    ;people()\txt=LSet$(people()\info[0],10)+\luokka
+    ;people()\txt+" Pelipiv: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+    ;people()\txt+" klo "+UStr$(\thour)+":"+UStr$(\tmin)
+    ;people()\txt+" Aika: "+UStr$(\minutes)+" m "+UStr$(\seconds)+" s "
+    ;people()\txt+" Virheit: "+UStr$(\errors)
+
+
+End Statement
+
+Macro PrintInfo
+  ;SHARED people(),day$()
+  USEPATH people()
+  Format "00"
+  bodytext$=LSet$(people()\info[0],15)+LSet$(\luokka,4)
+  bodytext$+RSet$(UStr$(\minutes)+"m ",4)+RSet$(UStr$(\seconds)+"s ",4)
+  bodytext$+LSet$(UStr$(\errors),5)
+  bodytext$+day$(\twday)+" "+Str$(\tdate)+"."+Str$(\tmonth)+"."+LSet$(UStr$(\tyear),4)
+  bodytext$+" "+Str$(\thour)+":"+Str$(\tmin)+" "+LSet$(UStr$(Cvi(people()\info[1])),4)
+End Macro
+
+
+ResetList people()
+While NextItem(people())
+  GetInfo{0}
+Wend
+
+
+.textview
+;
+;a little text viewer!
+;
+;as used on the Blitz 2 pd disks
+;
+;put textfile name in cli argument to test from here
+;
+;otherwise create an executable
+;
+
+
+
+
+
+
+;Dim t$(2000),l(20)
+
+;NEWTYPE.text
+;  txt$
+;  selected.b
+;End NEWTYPE
+
+;Dim t.text(2000)
+
+;Dim l(20)
+
+
+;DHeight=256 ;DispHeight
+;DX=14
+
+;vl=Int((DHeight-40)/8) ;visible display lines.
+vl=16
+
+dh=vl*8+26
+
+;TextH=dh-46+#addproph+4 ;+#downpix
+TextH=vl*8 ;66
+TextW=numchars*8
+
+x=64:y=dh-12:g=4
+
+win\no=0,0,0,640,256
+USEPATH win
+
+BorderPens #cwhite,#cblack
+
+#B_Prop1=3
+#B_EXIT=4             ; BUTTONS
+#B_Lajittele=9
+#B_PoistaValinnat=10
+#B_Koordinaatisto=11
+
+#G1_Nimi=5            ; GROUP1
+#G1_Luokka=6
+#G1_Aika=7
+#G1_Virheet=8
+
+
+PropGadget \no,TextW+TextX+9,TextY,128|256,#B_Prop1,10,TextH
+;TextGadget \no,TextW+4-35,dh+TextY,0,4,"EXIT!"
+TextGadget \no,TextW+TextX-35,TextY+TextH+4,0,#B_EXIT,"EXIT!"
+
+
+ButtonGroup 1
+TextGadget \no,TextX,TextY+TextH+16,512,#G1_Nimi,"  Nimi   ":Toggle 0,5,On
+TextGadget \no,TextX,TextY+TextH+28,512,#G1_Luokka," Luokka  "
+TextGadget \no,TextX,TextY+TextH+40,512,#G1_Aika,"  Aika   "
+TextGadget \no,TextX,TextY+TextH+52,512,#G1_Virheet," Virheet "
+
+TextGadget \no,TextX,TextY+TextH+70,0,#B_Lajittele," Lajittele "
+TextGadget \no,TextX,TextY+TextH+90,0,#B_PoistaValinnat," Poista kaikki valinnat "
+;GadgetJam 1:GadgetPens #cblack,#cdgrey
+TextGadget \no,TextX+100,TextY+TextH+16,1,#B_Koordinaatisto," Nyt koordinaatistossa " ;  | Sulje koordinaatistoruutu "
+
+bod=.9999:If l>vl Then bod=vl/l
+
+SetVProp \no,3,0,bod
+
+
+;Screen 0,0,0,640,dh,2,$8000,"TEXT VIEW",1,2
+;Screen 0,0,0,640,256,2,$8000,screentitle$,1,2
+;Screen 0,27,"TEXT VIEW"
+;RGB 0,6,6,6:RGB 1,15,15,15:RGB 2,0,0,0:RGB 3,4,2,10 ;15,15,15
+
+;ScreensBitMap 0,0
+AddIDCMP $8|$10
+;Window 0,0,0,640,dh,$1900,"",0,1,0
+;Window #glist,0,0,640,256,$1900,"",pen2,pen1,#glist ; 0,0,640,dh
+
+
+USEPATH win
+
+Window \no,\x,\y,\w,\h,$2|$4|$8|$400|$1000,screentitle$,pen2,pen1,\no
+
+;WLocate 0,dh-10+#downpix
+
+WColour #cblue,#cdgrey
+
+WLocate 0,TextX+dh-15:Print "Lajitteluperuste:"
+WLocate TextX,TextY-10
+Print "Pelaaja        Lk  Aika    Virh Pelattu       klo   Pelikertoja"
+
+WColour #cblack,#cdgrey
+
+GadgetBorder TextW+TextX+10,TextY,8,TextH
+GadgetBorder TextX,TextY,TextW,TextH
+
+;WLocate 0,14+p#downpix
+cl=1:Gosub refresh
+
+Repeat
+  ev.l=WaitEvent
+  Select ev
+  Case #IDCMP_MOUSEBUTTONS
+    If MButtons=1
+      ex=EMouseX:ey=EMouseY
+      ;WLocate 0,0:Print ex," ",ey,"      " ; print event mouse coords
+      If ey > TextY+#fonth AND ey < TextY+TextH+11  ;8+3
+        If ex > TextX AND ex < TextX+TextW
+          SelLine.w=Int((ey-TextY-3)/8)-1
+          If SelLine<=numpeople-1
+            ResetList people()
+            i=0:While NextItem(people()) AND i<>cl+SelLine-1:i+1:Wend
+
+            If people()\selected=False
+              people()\selected=True
+              WColour #cblack,#cblue
+            Else
+              people()\selected=False
+              WColour #cblack,#cdgrey
+            EndIf
+            WLocate TextX,TextY+8*SelLine
+
+            ;Print LSet$(people()\txt,numchars)
+            !PrintInfo{}
+            Print LSet$(bodytext$,numchars)
+          EndIf
+        EndIf
+      EndIf
+    EndIf
+    ; tehdnk rutiini joka katsoo valitun rivin koordinaattien
+    ; perusteella?
+
+  Case #IDCMP_GADGETDOWN
+    Select GadgetHit
+    ;Case 1
+    ;  While Event<>64 AND cl>1
+    ;    VWait
+    ;    Scroll 0,12,624,vl LSL 3-8,0,20
+    ;    Boxf 0,12,623,19,#cblue
+    ;    cl-1:Locate 0,1.5
+    ;    Print t(cl)\txt
+    ;    Gosub showprop
+    ;  Wend
+    ;  ocl=cl
+    ;Case 2
+    ;  While Event<>64 AND cl<=l-vl
+    ;    VWait
+    ;    Scroll 0,20,624,vl LSL 3-8,0,12
+    ;    Boxf 0,vl LSL 3+12-8,623,vl LSL 3+11,#cblue
+    ;    cl+1:Locate 0,.5+vl
+    ;    Print t(cl+vl-1)\txt
+    ;    Gosub showprop
+    ;  Wend
+    ;  ocl=cl
+    Case #B_Prop1
+      Repeat
+        Gosub propref
+      Until WaitEvent=64
+    ;Case #B_Koordinaatisto
+    ;  ;If GadgetStatus(win\no,#B_Koordinaatisto)=Off
+    ;  ;  WLocate 0,0:Print "Off"
+    ;  ;  ;Toggle win\no,#B_Koordinaatisto,On
+    ;  ;Else
+    ;  WLocate 0,0:Print GadgetStatus(win\no,#B_Koordinaatisto)," "
+    ;    ;Toggle win\no,#B_Koordinaatisto,Off
+    ;  ;EndIf
+    End Select
+  Case #IDCMP_GADGETUP
+    Select GadgetHit
+    Case 1
+    Case 2
+    Case 3
+      Gosub propref
+    Case #B_EXIT
+      SaveScreen 0,"ram:Screen.iff"
+      ;CloseWindow #glist
+      ;Free GadgetList #glist
+      ;Return
+      End
+    Case #B_Lajittele
+      ;USEPATH people()
+      Select ButtonId(win\no,1)
+        Case #G1_Nimi
+          ResetList people()
+          While NextItem(people())
+            people()\listsort=Cvl(people()\info[0])
+          Wend
+          ResetList people()
+          SortList people(),SizeOf .person\listsort
+
+          ;; TAI StringSort joka toimii mys:
+          ;ResetList people()
+          ;StringSort people(),SizeOf .person\listsort
+
+          ; StringSort
+          ; ListBase
+          ; StringSortItem
+          ;  SortList
+        Case #G1_Luokka
+          ResetList people()
+          While NextItem(people())
+            people()\listsort=Cvl(people()\luokka)
+          Wend
+          ResetList people()
+          SortList people(),SizeOf .person\listsort
+        Case #G1_Aika  ; Aika
+          ResetList people()
+          While NextItem(people())
+            people()\listsort=people()\minutes*60+people()\seconds
+          Wend
+          ResetList people()
+          SortList people(),SizeOf .person\listsort
+        Case #G1_Virheet
+          SortList people(),SizeOf .person\errors
+      End Select
+      Gosub refresh2
+    Case #B_PoistaValinnat
+      ResetList people()
+      While NextItem(people())
+        people()\selected=False
+      Wend
+      Gosub refresh2
+    Case #B_Koordinaatisto
+      If GadgetStatus(win\no,#B_Koordinaatisto)=On
+        Gosub coord
+      EndIf
+    Default
+      ;cl=l(GadgetHit-5):    ; this is for jumping to another position
+      Gosub refresh:Gosub showprop
+    End Select
+  Case #IDCMP_CLOSEWINDOW
+    End
+  End Select
+Forever
+
+propref
+cl=Int(VPropPot(win\no,3)*(l-vl+1)+1)
+;
+refresh
+If cl<>ocl
+  ;While ocl > cl AND cl<=l-vl
+  ;  If PrevItem(people())
+  ;    ocl-1
+  ;  EndIf
+  ;Wend
+  ;While ocl < cl AND cl<=l-vl
+  ;  If NextItem(people())
+  ;    ocl+1
+  ;  EndIf
+  ;Wend
+
+  ocl=cl
+
+  ;Boxf 0,12,623,vl LSL 3+11,#cblue
+  Use Window win\no
+  WLocate TextX,TextY
+
+  ;Locate 0,1.5+#textdown   ;1.5
+
+  ;ResetList people()
+  ;k=0
+  ;While k<>cl
+  ;  If NextItem(people()
+  ;    k+1
+  ;  Else
+  ;    k=cl
+  ;  EndIf
+  ;Wend
+  k=0
+
+  ;GetInfo{0}
+  ;NPrint LSet$(people()\info[0]+bodytext$,78)    ;(t$(cl+k),78)
+
+  ResetList people()
+  i=0:While NextItem(people()) AND i<>cl-1:i+1:Wend
+
+  k=0:USEPATH people()
+
+  If people()\selected=True
+    WColour #cblack,#cblue
+  Else
+    WColour #cblack,#cdgrey
+  EndIf
+  WLocate TextX,TextY+8*k
+  ;Print LSet$(people()\txt,numchars)
+  !PrintInfo{}
+  Print LSet$(bodytext$,numchars)
+
+
+  While NextItem(people()) AND k<vl
+    k+1
+
+    WLocate TextX,TextY+8*k
+    If people()\selected=True
+      WColour #cblack,#cblue
+    Else
+      WColour #cblack,#cdgrey
+    EndIf
+    ;Print LSet$(people()\txt,numchars)
+    !PrintInfo{}
+    Print LSet$(bodytext$,numchars)
+  Wend
+
+EndIf
+Return
+
+refresh2
+  ResetList people()
+  i=0:While NextItem(people()) AND i<>cl-1:i+1:Wend
+
+  k=0:USEPATH people()
+
+  If people()\selected=True
+    WColour #cblack,#cblue
+  Else
+    WColour #cblack,#cdgrey
+  EndIf
+  WLocate TextX,TextY+8*k
+  ;Print LSet$(people()\txt,numchars)
+  !PrintInfo{}
+  Print LSet$(bodytext$,numchars)
+
+
+  While NextItem(people()) AND k<vl
+    k+1
+
+    WLocate TextX,TextY+8*k
+    If people()\selected=True
+      WColour #cblack,#cblue
+    Else
+      WColour #cblack,#cdgrey
+    EndIf
+    ;Print LSet$(people()\txt,numchars)
+    !PrintInfo{}
+    Print LSet$(bodytext$,numchars)
+  Wend
+
+Return
+
+showprop
+SetVProp win\no,3,(cl-1)/(l-vl),bod
+Redraw win\no,3
+Return
+
+.data
+
+daynames:
+Data$ "Su","Ma","Ti","Ke","To","Pe","La","Su"
+;Data$ Sunnuntai,Maanantai,Tiistai,Keskiviikko,Torstai,Perjantai,Lauantai
+
+.coord
+
+;Dim p.coorditem(numgames)  ; p & z random result curves..
+;Dim z.coorditem(numgames)
+;;Dim b.item(numgames)
+;
+;For i=0 To numgames
+;  p(i)\x=i,Rnd(maxtime)   ; random y coordinates in cwin
+;  z(i)\x=i,Rnd(maxtime)
+;  ;b(i)\x=i,Rnd(maxtime)
+;Next
+
+Format ""
+
+
+
+Screen 1,28,"Koordinaatiston testiversio v 0.1 (25.6.1995) "+Chr$(169)+" Lauri Ojansivu"
+
+;ScreensBitMap 1,1
+;Use BitMap 1
+;Locate 0,0
+
+;Boxf 0,11,640,512,#cwhite
+
+Window 2,0,0,640,512,$100|$800,"",0,1
+WCls #cwhite
+;Window 1,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tmn ikkunan kokoa",0,1
+;Window 1,0,0,640,512,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tmn ikkunan kokoa",0,1
+
+Gosub DrawCoordSystem
+
+;SaveScreen 1,"ram:Hihhei.iff"
+
+; Tested coordinates once with this uncommented code
+
+;WColour #cblack,#cgrey
+;While Joyb(0)=0
+;  WLocate 100,100
+;  Print "X ",WMouseX," Y ",WMouseY,"         "
+;Wend
+
+
+Repeat
+  ev.l=WaitEvent
+  Select ev
+  If MButtons=1
+    cwin\w=EMouseX-20,EMouseY
+    WCls #cdgrey
+    Gosub DrawCoordSystem
+  EndIf
+  ;Case $2   : twin\w=WindowWidth,WindowHeight : WCls #cdgrey :Gosub DrawCoordSystem
+  ;
+  ;; No menus yet.. tried to open window without borders..
+  ;
+  ;Case $100 :
+  ;  ;twin\x=WindowX,WindowY,WindowWidth,WindowHeight
+  ;  Select ItemHit
+  ;  ;Case 0 : If MenuChecked(0,0,0)
+  ;  ;           CloseWindow 0
+  ;  ;           SubIDCMP $00000306
+  ;  ;           DefaultIDCMP $100
+  ;  ;           Window        0,\x,\y,\w,\h,$100|$800|$1000,"",1,2
+  ;  ;         Else
+  ;  ;           CloseWindow 0
+  ;  ;           DefaultIDCMP  $00000306
+  ;  ;           Window        0,\x,\y,\w,\h,$0000043F,"Tuloskaavio",1,2
+  ;  ;         EndIf
+  ;  ;         SetMenu 0
+  ;  ;         Gosub DrawCoordSystem
+  ;  Case 1 : exit=True
+  ;  End Select
+
+  Case #IDCMP_RAWKEY
+    keypress$=Inkey$
+    Select RawKey ; Hex$(RawKey)
+
+    Case #A_Esc         ; Exit code?
+      Pop Select:Pop Repeat
+      CloseWindow 2:CloseScreen 1
+      Use Screen 0
+      Use Window 0
+      Toggle 0,#B_Koordinaatisto,Off
+      End
+  ;
+  ;  Case #A_Up    :If twin\y>10 Then twin\y-1    ; Place
+  ;  Case #A_Down  :If twin\y+twin\h<512 Then twin\y+1
+  ;  Case #A_Left  :If twin\x>10 Then twin\x-1
+  ;  Case #A_Right :If twin\x+twin\w<640 Then twin\x+1
+  ;
+  ;  Case #S_Up    :If twin\h>20 Then twin\h-1   ; change size
+  ;  Case #S_Down  :If twin\h<512 Then twin\h+1  ; = DownRight
+  ;  Case #S_Left  :If twin\w>20 Then twin\w-1   ; coordinate
+  ;  Case #S_Right :If twin\w<640 Then twin\w+1  ; position
+  ;
+  ;  Case #S_UpLeft     ; Size
+  ;  Case #S_UpRight
+  ;  Case #S_DownLeft
+  ;  Case #S_DownRight
+  ;  Case #S_Center
+    End Select
+
+  ;  Gosub DrawCoordSystem
+
+  ;Case #IDCMP_CLOSEWINDOW
+  ;  ;cwin\x+WindowX ;+WLeftOff,cwin\y+WindowY+WTopOff
+  ;  ;cwin\y+WindowY
+  ;  ;cwin\x=WindowX+40,WindowY+20 ;,twin\w-60,twin\h-40
+  ;  Use Window 2
+  ;  ;twin\x=twin\x+WindowX,twin\y+WindowY
+  ;  ;twin\x=WindowX,WindowY
+  ;  CloseWindow 1
+  ;  ;USEPATH twin
+  ;  ;Window 1,\x,\y,\w,\h,$800,"",0,1
+  ;  winwin2.b=True
+  ;  Gosub DrawCoordSystem
+  ;  VWait 10
+  ;  MouseWait
+  ;  Pop Select:Pop Repeat
+  ;  CloseWindow 2:CloseScreen 1
+  ;  Use Window win\no
+  ;  Toggle win\no,#B_Koordinaatisto,Off
+  ;  Return
+  End Select
+Forever
+
+
+
+;twin\x=10,20,600,200
+
+;cwin\x=50,40,540,160
+
+DrawCoordSystem     ; ha, quess what this subroutine does ;)
+
+  ;cwin\x=twin\x+40,twin\y+20,twin\w-60,twin\h-40
+  ;cwin\x=twin\x,twin\y,twin\w,twin\h
+                               ;  | <-cdistx -> |
+                               ; 10           20
+  cdistx=Int(numgames/num_xcoords)  ; how many my coords are between showed my coords
+  cdisty=Int(maxtime/num_ycoords)   ;
+
+                            ; coord x width (1 my coord unit
+  cxw=(cwin\w-cwin\x)/numgames ;  = my coord width in window - my coord starting x coord
+  cyh=(cwin\h-cwin\y)/maxtime   ; coord y height
+
+DrawCoords2
+
+  WCls #cwhite
+  WColour #cblack,#cwhite
+
+  USEPATH cwin                            ; piirretn koordinaatisto pikselin
+
+  t=1
+  t20=20
+  t15=15
+  t10=10
+  t5=5
+
+  Wline \x-t,\y-t15-t,\x-t,\h+t,\w+t5+t15+t,\h+t,#cblack ; vasemmalle ja alas jottei 0,0 kohta
+                                          ; tule koordinaatiston plle
+
+  Wline \x-t5-t,\y-t10-t,\x-t,\y-t15-t,\x+t5-t,\y-t10-t,#cblack  ; arrow for y axel
+  Wline \w+t15+t,\h-t5+t,\w+t20+t,\h+t,\w+t15+t,\h+t5+t,#cblack
+
+
+  For x=\x To \w Step cdistx*cxw
+    Wline x,\h+t,x,\h+5+t,#cblack       ; x-akselin koordinaattien vliviivat
+    num.q=wx2cx{x}                    ; ja numerot
+    If Frac(num)<.5:num=Int(num):Else:num=Int(num)+1:EndIf
+    numl.w=Len(Str$(num))*#fontw
+    ;If winwin2
+    ;WLocate x-numl/2,\h+t
+    ;Else
+    WLocate x-numl/2,\h+#fonth+t
+    ;EndIf
+    Print num
+  Next
+
+  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien vliviivat
+    Wline \x-t,y,\x-5-t,y,#cblack       ; ja numerot
+    num.q=wy2cy{y}
+    If Frac(num)<.5:num=Int(num):Else:num=Int(num)+1:EndIf
+    numl.w=Len(Str$(num))*#fonth
+    ;If winwin2
+    ;WLocate \x-numl-#fontw,y-#fonth/2-#fonth
+    ;Else
+    WLocate \x-numl-#fontw,y-#fonth/2
+    ;EndIf
+    Print num
+  Next
+
+  USEPATH people()
+  ResetList people()
+
+  ;WLocate 200,200:Print 2000
+  While NextItem(people())
+    If people()\selected=True ;Cvi(people()\info[1])>1 AND
+
+      ;numrec.w=1
+      seconds1.w=0
+      oldseconds.w=0
+
+      For numrec.w=1 To Cvi(\info[1])
+        info1$=Mid$(people()\info[2],(#scorelen*(numrec-1))+1,#scorelen)
+        ;errors1.w=Cvi(Mid$(info1$,4,2))
+        ;minutes.w=Asc(Mid$(info1$,6,1))
+        ;seconds.w=Asc(Mid$(info1$,7,1))
+        seconds1.w=Asc(Mid$(info1$,6,1))*60+Asc(Mid$(info1$,7,1))
+        ;WLocate 100,numrec*10:Print seconds1
+
+        If numrec=1             ; draw always from previous
+          oldseconds=seconds1   ; point to current point
+        Else
+          cline{numrec-1,oldseconds,numrec,seconds1,#cblue}
+          oldseconds=seconds1
+        EndIf
+      Next
+    EndIf
+  Wend
+
+Return
+
+;      For numrec.w=1 To Cvi(\info[1])
+;        info1$=Mid$(people()\info[2],(#scorelen*(numrec-1))+1,#scorelen)
+;        ;errors1.w=Cvi(Mid$(info1$,4,2))
+;        ;minutes.w=Asc(Mid$(info1$,6,1))
+;        ;seconds.w=Asc(Mid$(info1$,7,1))
+;        seconds1.w=Asc(Mid$(info1$,6,1))*60+Asc(Mid$(info1$,7,1))
+;        WLocate 100,numrec*10:Print seconds1
+;        info2$=Mid$(people()\info[2],(#scorelen*(numrec))+1,#scorelen)
+;        ;errors2.w=Cvi(Mid$(info$,4,2))
+;        seconds2.w=Asc(Mid$(info2$,6,1))*60+Asc(Mid$(info2$,7,1))
+;        WLocate 200,numrec*10:Print seconds2
+;        cline{numrec-1,seconds1,numrec,seconds2,#cblue}
+;        ;seconds1=seconds2
+;      Next
+
+
+
+
+;For i=0 To pnumgames-1                           ; testataan satunnaisilla
+;  cline{p(i)\x,p(i)\y,p(i+1)\x,p(i+1)\y,#cblue}  ; arvoilla systeemin toimintaa
+;  cline{z(i)\x,z(i)\y,z(i+1)\x,z(i+1)\y,5}
+;  ;cline{b(i)\x,b(i)\y,b(i+1)\x,b(i+1)\y,7}
+;Next
+
+
+;monthnames:
+;Data$ "Tam","Hel","Maa","Huh","Tou","Kes","Elo","Syy","Lok","Mar","Jou"
+
+;
+;If NumPars=1
+;  If ReadFile(0,Par$(1))
+
+
+
+;  If ReadFile(0,"ram:testi.txt")
+;    FileInput 0
+;    While NOT Eof(0) AND l<2000
+;      l+1:t(l)\txt=Edit$(78)
+;      If Left$(t(l)\txt,1)="\"
+;        g+1:l(g-5)=l
+;        TextGadget #glist,x,y,0,g,Mid$(t(l)\txt,2)
+;        x+Len(t(l)\txt)*8+8
+;        l-1
+;      EndIf
+;    Wend
+;    CloseFile 0
+;    If l=0 Then End
+;  EndIf
+
+;l=numpeople
+
+    ;ResetList people()
+    ;While NextItem(people())
+    ;  l+1 ;:t$(l)=Edit$(78)
+    ;  ;If Left$(t$(l),1)="\"
+    ;  ;  g+1:l(g-5)=l
+    ;  ;  TextGadget #glist,x,y,0,g,Mid$(t$(l),2)
+    ;  ;  x+Len(t$(l))*8+8
+    ;  ;  l-1
+    ;  ;EndIf
+    ;Wend
+
+;Else
+;  DisplayBeep_ 0:End
+;EndIf
+
+;TextGadget 0,624,dh-32,0,1,"^"
+;TextGadget 0,624,dh-22,0,2,"v"
+
+;PropGadget #glist,627,14+#downpix,128|256,3,10,dh-46+#addproph+4 ;+#downpix
+;TextGadget #glist,592,dh-12+#downpix,0,4,"EXIT!"
+
+
+  ;For k=0 To vl-1
+    ;If NextItem(people()) <= numpeople
+    ;  ;GetInfo{cl+k-1,0}
+    ;  GetInfo{0}
+    ;  NPrint LSet$(people()\info[0]+bodytext$,78)    ;(t$(cl+k),78)
+    ;Else
+    ;  Pop If:Pop For
+    ;EndIf
+  ;  WLocate TextX,TextY+8*k
+  ;
+  ;  If people()\selected=True
+  ;    WColour #cblack,#cblue
+  ;  Else
+  ;    WColour #cblack,#cdgrey
+  ;  EndIf
+  ;  Print LSet$(people()\info[0],numchars)
+  ;
+  ;
+  ;  If NextItem(people())
+  ;  EndIf
+
+    ;USEPATH people()
+    ;Print \luokka," ",day$(\twday)," ",\tdate,".",\tmonth,".",\tyear
+    ;Print " ",\thour,":",\tmin," ",\minutes,"
+    ;bodytext$=" Luokka: "+\luokka
+    ;bodytext$+" Pelipiv: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+    ;bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)
+    ;bodytext$+" Aika: "+UStr$(\minutes)+" m "+UStr$(\seconds)+" s "
+    ;bodytext$+" Virheit: "+UStr$(\errors)
+  ;Next
+

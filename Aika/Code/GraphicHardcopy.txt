@@ -1,0 +1,32 @@
+NoCli
+WBStartup
+WbToScreen 0
+WBenchToFront_
+Repeat
+  MaxLen pa$ = 160
+  MaxLen fi$ = 64
+  pa$ = "Tempdisk:"
+  pic$ = FileRequest$("Select Picture to PRINT..",pa$,fi$)
+  WBenchToBack_
+  If pic$ <> ""
+    ILBMInfo pic$
+    Screen 0,0,0,ILBMWidth,ILBMHeight,ILBMDepth,ILBMViewMode,"",1,2
+    ;Window 0,0,0,ILBMWidth,ILBMHeight,$0800,"",0,1
+    cols = 2^ILBMDepth
+    For i = 0 To cols - 1
+     RGB i,0,0,0
+    Next i
+    LoadScreen 0,pic$,0
+    Use Palette 0
+  Else
+   End
+  EndIf
+  xpos.w = 0
+  ypos.w = 0
+  wid.w = ILBMWidth
+  ht.w = ILBMHeight
+  ;Window 1,ILBMWidth/3,ILBMHeight/3,ILBMWidth/3,ILBMHeight/8,0,"Printing",0,1
+  ;WLocate 2,3
+  ;Print "Please Wait"
+  Hardcopy 0,xpos,ypos,wid,ht,wid,ht,$400
+Forever

@@ -1,0 +1,27 @@
+Dim wday$(7)
+Restore weekdaydata
+For i=0 To 6
+  Read wday$(i)
+Next
+
+NPrint "Date    ",Date$(SystemDate)
+NPrint "Weekday ",WeekDay," ",wday$(WeekDay)
+NPrint "Day     ",Days
+NPrint "Month   ",Months
+NPrint "Year    ",Years
+NPrint "Hour    ",Hours
+NPrint "Min     ",Mins
+NPrint "Sec     ",Secs
+WbToScreen 0
+Window 0,200,0,150,50,0,"Clock",1,2
+Repeat
+  WLocate 5,20
+  Print Hours,":",Mins,":",Secs," "
+Until Joyb(0)<>0
+CloseWindow 0
+End
+
+weekdaydata:
+Data$ "Sunnuntai","Maanantai","Tiistai","Keskiviikko","Torstai","Perjantai","Lauantai"
+
+

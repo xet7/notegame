@@ -1,0 +1,162 @@
+WBStartup:NoCli
+SetErr:End:End SetErr
+
+#cgrey=0
+#cblack=1
+#cwhite=2
+#cblue=3
+#fontw=8 : #fonth=8
+
+#numgames=50  ; number of games played ; 50
+maxtime=40+2   ; how much time used ; 40+2
+
+num_xcoords=10  ; how many coords in axels
+num_ycoords=10
+
+#numitemlists=2
+
+
+NEWTYPE.win:x.q:y:w:h:End NEWTYPE
+NEWTYPE.item
+  x.q:y
+End NEWTYPE
+
+DEFTYPE.win twin,cwin  ; twin = real window coordinates
+                       ; cwin = coordinate system axels coordinates
+
+Dim p.item(#numgames)  ; p & z random result curves..
+Dim z.item(#numgames)
+;Dim b.item(#numgames)
+
+For i=0 To #numgames
+  p(i)\x=i,Rnd(maxtime)   ; random y coordinates in cwin
+  z(i)\x=i,Rnd(maxtime)
+  ;b(i)\x=i,Rnd(maxtime)
+Next
+
+Function cx2wx{x}                 ; my coord x -> window x
+  SHARED cwin,cxw
+  Function Return x*cxw+cwin\x
+End Function
+
+Function cy2wy{y}                 ; my coord y -> window y
+  SHARED cwin,cyh
+  Function Return y*cyh+cwin\y
+End Function
+
+Function wx2cx{x}                ; window x -> my coord x
+  SHARED cwin,cxw
+  Function Return (x-cwin\x)/cxw
+End Function
+
+Function wy2cy{y}                ; window y -> my coord y
+  SHARED cwin,cyh,maxtime
+  Function Return Abs((y-cwin\y)/cyh-maxtime) ; sama kuin (wy2cy{y}-40)*-1
+End Function                              ; Abs= *-1
+
+Statement cline{x1,y1,x2,y2,col.b}      ; my coord line -> window x1y1x2y2 line
+  SHARED cwin,cxw,cyh
+  Wline cwin\x+x1*cxw,cwin\h-y1*cyh,cwin\x+x2*cxw,cwin\h-y2*cyh,col
+End Statement
+
+
+twin\x=10,20,600,200
+
+USEPATH twin
+
+Screen 0,27,"Koordinaatiston testiversio v 0.1 (25.6.1995) "+Chr$(169)+" Lauri Ojansivu"
+Window 0,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tmn ikkunan kokoa",0,1
+
+Gosub DrawCoordSystem
+
+
+; Tested coordinates once with this uncommented code
+
+;WColour #cblack,#cgrey
+;While Joyb(0)=0
+;  WLocate 100,100
+;  Print "X ",WMouseX," Y ",WMouseY,"         "
+;Wend
+
+
+exit.b=False
+Repeat
+  ev.l=WaitEvent
+  Select ev
+  Case $2   : twin\w=WindowWidth,WindowHeight : WCls #cgrey :Gosub DrawCoordSystem
+  ;
+  ;; No menus yet.. tried to open window without borders..
+  ;
+  ;Case $100 :
+  ;  ;twin\x=WindowX,WindowY,WindowWidth,WindowHeight
+  ;  Select ItemHit
+  ;  ;Case 0 : If MenuChecked(0,0,0)
+  ;  ;           CloseWindow 0
+  ;  ;           SubIDCMP $00000306
+  ;  ;           DefaultIDCMP $100
+  ;  ;           Window        0,\x,\y,\w,\h,$100|$800|$1000,"",1,2
+  ;  ;         Else
+  ;  ;           CloseWindow 0
+  ;  ;           DefaultIDCMP  $00000306
+  ;  ;           Window        0,\x,\y,\w,\h,$0000043F,"Tuloskaavio",1,2
+  ;  ;         EndIf
+  ;  ;         SetMenu 0
+  ;  ;         Gosub DrawCoordSystem
+  ;  Case 1 : exit=True
+  ;  End Select
+  Case $200 : exit=True
+  End Select
+Until exit=True
+
+
+End
+
+
+DrawCoordSystem     ; ha, quess what this subroutine does ;)
+
+  cwin\x=twin\x+40,twin\y+20,twin\w-60,twin\h-40
+
+                               ;  | <-cdistx -> |
+                               ; 10           20
+  cdistx=#numgames/num_xcoords  ; how many my coords are between showed my coords
+  cdisty=maxtime/num_ycoords   ;
+
+                            ; coord x width (1 my coord unit
+  cxw=(cwin\w-cwin\x)/#numgames ;  = my coord width in window - my coord starting x coord
+  cyh=(cwin\h-cwin\y)/maxtime   ; coord y height
+
+  USEPATH cwin                            ; piirretn koordinaatisto pikselin
+
+  Wline \x-1,\y-16,\x-1,\h+1,\w+5+16,\h+1,#cblack ; vasemmalle ja alas jottei 0,0 kohta
+                                          ; tule koordinaatiston plle
+  t=1
+  Wline \x-5-t,\y-10-t,\x-t,\y-15-t,\x+5-t,\y-10-t,#cblack  ; arrow for y axel
+  Wline \w+15+t,\h-5+t,\w+20+t,\h+t,\w+15+t,\h+5+t,#cblack
+
+
+
+  For x=\x To \w Step cdistx*cxw
+    Wline x,\h+1,x,\h+6,#cblack       ; x-akselin koordinaattien vliviivat
+    num.w=wx2cx{x}                    ; ja numerot
+    numl.w=Len(Str$(num))*#fontw
+    WLocate x-numl/2,\h+#fonth+1
+    Print num
+  Next
+
+  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien vliviivat
+    Wline \x-1,y,\x-6,y,#cblack       ; ja numerot
+    num.w=wy2cy{y}
+    numl.w=Len(Str$(num))*#fonth
+    WLocate \x-numl-8,y-#fonth/2
+    Print num
+  Next
+
+
+  For i=0 To #numgames-1                           ; testataan satunnaisilla
+    cline{p(i)\x,p(i)\y,p(i+1)\x,p(i+1)\y,#cblue}  ; arvoilla systeemin toimintaa
+    cline{z(i)\x,z(i)\y,z(i+1)\x,z(i+1)\y,5}
+    ;cline{b(i)\x,b(i)\y,b(i+1)\x,b(i+1)\y,7}
+  Next
+
+Return
+

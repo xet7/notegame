@@ -1,0 +1,47 @@
+On Thu, 25 May 1995, NIGEL HUGHES wrote:
+>
+> Dear All,
+>       Am I current in assuming that I can launch other programs by
+> doing...
+>
+>
+
+>       p$="Myprog"
+>       f$="NIL:"
+>       Execute_ (&p$,&f$)`
+
+You're on the right track, but that's not quite the right way to go with
+it...  The parameters following the string to execute are DOS filehandles
+(there are two, an input and an output.)  If you leave these null, your
+program will use your own CLI for input and output if your program is run
+from CLI, or NIL: if run from Workbench.  Try this:
+
+p$="Myprog"
+Execute_ &p$,0,0
+
+
+Or, if you want it to ALWAYS use NIL: for input and output, try this:
+
+nil$="NIL:"
+*fh=Open_(&nil$,1004)
+p$="Myprog"
+Execute &p$,fh,fh
+Close_ fh
+
+        +---------------------------------------------------------------+
+        |      Richard T. Elmore   -   "Head" of HeadSoft Software      |
+        | E-MAIL: relmore@silver.sdsmt.edu          TEL: (605) 348-3337 |
+        +---------------------------------------------------------------+
+Thanks to all who helped it works fine with...
+
+NoCli
+p$="run DpaintIV:Dpaint"
+Execute_ &p$,0,0
+End
+
+The run allows Blitz program execution to continue without stopping
+until the launched process has finished.
+
+
+Nigel Hughes
+

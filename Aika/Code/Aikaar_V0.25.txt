@@ -1,0 +1,1572 @@
+; Aika-arvoja, Amigan koodi    Copyright Lauri Ojansivu
+;              idea & PC-koodi Copyright Tapio Prepalo
+;
+; version 0.01 (23.11.-29.11.1994)
+;
+;  + window and selection routines works, and texts for
+;    symbols is loaded from disk!
+;  - 2 extra bitmaps etc. gadget creation system doesn't
+;    work properly.. argh, too hard way this one, so
+;    not good 3d look yet and many things doesn't work
+;  + Anyway, when I get this working, making other learning
+;  | parts is easy!
+;  V
+; version 0.02 (23.11-30.11.1994)
+;
+;  + 3d gadget system works _finally_ and with _one_ bitmap, it
+;    1) GetaShape:s symbol
+;    2) blits unselected gadget (loaded shape) and symbol to it
+;    3) GetaShape:s final selected gadget
+;    4) 2-3 for selected gadget
+;  + variables which doesn't change to #constants!! YEAH!
+;  + And string & variable & constant list to top of code!
+;    Color constants too, so palette changes can be
+;    updated easily to code!
+;  + timer is variable in SetInt! Using Event instead of
+;    WaitEvent so timer etc. gets updated regularly
+;
+; version 0.03 (2.12.1994)
+;
+;  + more constants! works after correcting some typing mistakes
+;  + maxsymbols variable is read from text "symbolit.txt"
+;    before symbol names, and it's used in rnd(maxitems)
+;  - still gotta do better random routine so it asks for all
+;    symbol names
+;
+; version 0.04 (4.12.1994)
+;
+;  + ptxt{} statement takes coordinates as arguments
+;
+; beta1: tried to make ptxt{} function, but it's not working yet
+;                               |
+; version 0.05 (7.12.1994)      V
+;
+;  + statement is better, workd with 9 in fontheight calculation
+;
+; version 0.06 (7.12.1994)
+;
+;  + major palette & visual look changes
+;  + black text in white title bar with BOTH OS1.3 & 2.0!
+;  + some 3d-generation in text routine - no iff background!
+;
+; version 0.07 (8.12.1994)
+;
+;  + 3d borders in text centre statement seems to work!
+;  + Got random list generation of 0-27 numbers working!
+;    And it's fast.. Just gotta make gadget code to use it,
+;    so symbols are in different places every time.
+;
+;; ADDED: Random list generator (C) Lauri Ojansivu
+;; -----------------------------------------------
+;;
+;; This is how it works:
+;;
+;;  1) make list of 0-27 numbers (hmm, or 0-28 or something..)
+;;  2) guess random number with RND(28)
+;;  3) go through list and search for guessed number
+;;  4) loop 2-3 until quessed number found
+;;  5) copy found number to SymbolOrder array
+;;  6) delete list array
+;;  7) loop 2-6 until all random numbers quessed
+;;
+;; version 0.1 (8.12.1994)
+;;
+;;  + heh, got it working in about 4 hours..
+;;  - might be a bit buggy, no function/statement/variable stuff
+;;  + but it works and is fast enough :)
+;;
+;; version 0.2 (12.12.1994)
+;;
+;;  + 2 arrays and gadgetlist generation added, test code
+;;    might not work :/
+;;
+;; Test code: uncommented so I can include this routine..
+;; ---------  First 2 lines are needed, so they are copied to
+;;            the variable list section (top of this code)
+;;
+;;
+;;Dim SymbolOrder(28)   ; final array of random symbols
+;;Dim List temp(28)     ; temp list for .randomlist
+;;
+;;For loop2=1 To 5
+;;  Gosub randomlist
+;;For loop1=0 To 27
+;;  NPrint SymbolOrder(loop1)
+;;  Next
+;;  NPrint ""
+;;  ;MouseWait
+;;Next
+;;MouseWait
+;;End
+
+;
+; version 0.08 (12.12.1994)
+;
+;  + trying to make random gadget thing working.. works!
+;    uses 2 randomlists, AskingOrder() and SymbolOrder()
+;
+; version 0.09 (12.12.1994)
+;
+;  + make it use one window, so it can be updated in
+;    game? YES! Huh, found bug, randomlist routine used
+;    same boolean exit.b variable than main loop. Now
+;    it works!
+;
+; version 0.10 (16.12.1994)
+;
+;  * got major idea: open window 0, blit needed graphics
+;    there and open other window on top of it, clearing use
+;    them when needed with WCls. Use Blitz example clock in
+;    initialization code. Use only gosub's not statements
+;    for speed. AND, W-Gfx routine & blitzlibs.res aren't
+;    needed, so code is compiled faster! Just make all
+;    these changes work..
+;
+; version 0.11 (17.12.1994)
+;
+;  + major idea completed.. using newtypes instead of
+;    arrays, player name window etc..
+;
+; version 0.12 (18.12.1994)
+;
+;  + improved getplayer thingy..
+;
+; version 0.13 (19.12.1994)
+;
+;  + more newtypes, less arrays! More readable code.
+;
+; version 0.14 (20.-21.12.1994)
+;
+;  + SortList with numbers of 4 first characters is
+;    a good start, improve it..
+;  + making HiScore table..
+;
+; version 0.15 (23.12.1994) .. testversion for TP
+;
+; version 0.16 (27.12.1994)
+;
+;  + no title & text windows, just draw to window 0
+;    -> uses less memory
+;  + improving time routine, instead of SetInt use
+;    intuition.library CurrentTime_
+;
+; version 0.17 (2.1.1995)
+;
+;  + improved gfx between 4 buttons
+;  + version can be seen in title bar
+;  + huh, _finally_ found hires nolace viewmode $8000
+;    from one example - no more ILBMInfo:s needed!
+;
+; version  0.18 (xx.5.1995)
+.ideas
+;;
+;  -- should I do non-multitasking version for KS1.3 to
+;     get more speed and, 320x256 resolution for more
+;     colors? Do I need more colors?
+;     * no windows, just bitmap operations, gadgets-zones
+;       or coordinate lookup when button pressed
+;       no Arial IntuiFont? Time with SetInt? RandomList
+;       with ARRAYS & RND-style like speed card game
+;     * Startup in WB: asking player name, class ??
+;
+;           Valitse peli:------------------
+;           |                              ||
+;           |                              ||
+;           |                              ||
+;           Pelaajan nimi:
+;                  luokka:
+;                  _______________
+;                  | Aloita peli |   -> Blitz mode
+;                  ~~~~~~~~~~~~~~~
+;     ? always to WB when new player? Own input routine?
+;     ? save results -> QAmiga mode, so blitz view doesn't corrupt
+;     ? double buffering & animation style?
+;     ? time calls in QAmiga mode..
+;
+;  -- OR: OS2.x multitasking version
+;
+;
+;
+;Ajanottokello vasemmassa alakulmassa
+;
+;Symboleilla ei ole kaksoiskuvaa (sddstdd muistia). Kdyttiksen 3d-reunat?
+;Symboli valittu    -> ddni, menikv oikein (vddrin-lyhyt, oikein-pitkd ddni)
+;Symboli vapautettu -> muutetaan symbolin vdri vihredksi blittaamalla se
+;                      BitMap:iin, muuttamalla vdri ja WBlittaamalla se
+;                      takaisin ikkunaan..??
+;
+;TAI: Zone  !!!
+;If Joyb(0)<>0 Then
+; valittu    -> muutetaan reunus & soitetaan sample, menikv oikein
+; muutos.b=True
+;Else
+; If muutos.b=True Then
+; vapautettu -> muutetaan reunus takaisin & vaihdetaan pun->vihr.
+;               symbolista
+; muutos.b=False
+; EndIf
+;EndIf
+;
+; version 0.19 (xx.5.-95)
+;
+;   + decided to make multitasking version which works with 1.3 & 2.x
+;   + MAJOR code cleanup, more statements, less gosubs and dublicates
+;     now one can see better what's going on
+;   + clock in left down corner bigger & using segment fonts
+;   ? maybe shapes soon to use less memory..
+;   + using ReqTools.library for file, message, question, string etc.
+;     requesters - should work with ks1.3, looks better and there's
+;     less things to code
+;
+; version 0.20 (xx.5.-95)
+;
+;   - just test version for zone etc.. actually v0.19 alpha
+;     non succesful test version.
+;
+; version 0.21 (4.6.-95)
+;
+;   - hey, got idea for save format which may be handy and
+;     and save some memory and disk space (no dublicates)
+;     let's see if it works and how fast it is..
+;
+; version 0.22 (10.6.-95)
+;
+;   - WOW! Now that save format works and one should be able
+;     to load different games :) etc..
+;
+;   - TODO: Latest results window with propgadget (like listview)
+;
+; version 0.23 (19.6.-95)
+;
+;   - clock uses shapes not fonts -> use less memory
+;
+;
+;
+; TODO:
+;
+; "uusi peli"
+;  - player name in big text with school name, class, players name
+;    no name under symboltable, just time
+;  - saves playes name and time and how many errors ha got
+;  - generates new random list of symbols and shows symbols
+;
+;  - players errors are in memory and in the end statistics
+;    box covers asking text box ?question?
+;    then unhappy face replaces ? marks (and sad sample plays)
+;  - when got right answer, then smiling face and happy sample
+;  - etc. gfx & sample trics.
+;
+; Nuotit:
+; uusi peli
+; - save player, make new random questin order
+; - show errors and points in box covering ?question?
+; - just select notes according to their position (visual mark
+;   when note selected?)  & plays (piano) sample in right
+;   freq when succeeded..
+;
+; Svellajit:
+; 1) select notes beginnig position from "piano-keyboard"
+; 2) draw notes beginning from that note
+; 3) some marks are wrong: green=wrong, red=right
+; 4) mark note you want to change (note flashes)
+; 5) select # or b if you want it up/down..
+;    -> # or b comes in the staff? (=nuottiviivasto?)
+; 6) when user has selected what he wants, he presses
+;   enter/
+
+
+WBStartup:NoCli:CloseEd
+
+#cblack=1     ; black
+#cdgrey=5 ;2 ;6  ; grey
+#cblue=3      ; blue
+#cgreen=7     ; green
+#cdred=4      ; dark red
+#ctgrey=2  ;5 ; title gray
+#clgrey=0     ; light grey
+#cwhite=6 ;2  ; white
+
+#fonth=13
+
+;x=41 : y=37    ; button's picture starting coords
+#x2=0 : #y2=0   ; symbols in window 1!
+#x3=41 : #y3=46 ; window 1 coords
+
+#xsel1=483 : #ysel1=0 ; unselected button's coordinates in #nbitmap
+#xsel2=560 : #ysel2=0 ; selected button's coordinates in #nbitmap
+
+#sw=67       ; symbol width
+#sh=33       ;        height
+#xsd=69      ;        x distance in symbolspic
+#ysd=34      ;        y   -"-
+
+#xsdw=80     ; symbol x distance in window
+#ysdw=40     ;        y   -"-
+
+#gw=75       ; final gadget height
+#gh=37       ; final gadget width
+
+#g1begin=10  ; 50-78
+#g2begin=80 ; 100-128
+
+;#background=0 ; background picture
+#allsymbols=1 ; all symbols in one shape
+#tbox1=2     ; unselected border shape (loaded before)
+;#tbox2=3     ; selected border shape (loaded before)
+#border=4    ; border for window
+#tborder=5   ; text border
+#tclock=6
+#tnumbers=7
+
+#rgbitmap=2   ; red symbol -> green symbol bitmap
+#nbitmap=1   ; temp bitmap where to get symbolpics
+
+;#tshape=9    ; symbolpic temp shape
+#pwin=4
+#scorelen=14  ; length of score entry
+#num=3        ; number of infos in people.person
+#extrapeople=200 ; how many players can play today
+#errhandler=Off
+
+#clockx=40    ;18
+#clocky=204
+#minx=#clockx+18
+#miny=#clocky+8
+;#miny=#clocky+8
+;#minx1=#clockx+17
+;#minx2=#clockx+17+21
+;#secx1=#clockx+17+50
+;#secx2=#clockx+17+69
+
+#tborderx=201   ;21,24 ;title&symbolborders
+#tbordery=194
+#borderx=0      ;,201,206
+#bordery=0
+
+
+#REQPOS_POINTER      =0
+#REQPOS_CENTERWIN    =1
+#REQPOS_CENTERSCR    =2
+#REQPOS_TOPLEFTWIN   =3
+#REQPOS_TOPLEFTSCR   =4
+
+#EZREQB_NORETURNKEY  =0
+#EZREQF_NORETURNKEY  =1 LSL #EZREQB_NORETURNKEY
+#EZREQB_LAMIGAQUAL   =1
+#EZREQF_LAMIGAQUAL   =1 LSL #EZREQB_LAMIGAQUAL
+#EZREQB_CENTERTEXT   =2
+#EZREQF_CENTERTEXT   =1 LSL #EZREQB_CENTERTEXT
+
+#SCREQB_SIZEGADS     =13
+#SCREQF_SIZEGADS     =1 LSL #SCREQB_SIZEGADS
+#SCREQB_DEPTHGAD     =14
+#SCREQF_DEPTHGAD     =1 LSL #SCREQB_DEPTHGAD
+#SCREQB_NONSTDMODES  =15
+#SCREQF_NONSTDMODES  =1 LSL #SCREQB_NONSTDMODES
+#SCREQB_GUIMODES     =16
+#SCREQF_GUIMODES     =1 LSL #SCREQB_GUIMODES
+#SCREQB_AUTOSCROLLGAD=18
+#SCREQF_AUTOSCROLLGAD=1 LSL #SCREQB_AUTOSCROLLGAD
+#SCREQB_OVERSCANGAD  =19
+#SCREQF_OVERSCANGAD  =1 LSL #SCREQB_OVERSCANGAD
+
+NEWTYPE .ezrequest
+  size.l:flags.l:title$:mess$:gad$
+End NEWTYPE
+
+NEWTYPE.TA
+  ta_Name.s
+  ta_YSize.w
+  ta_Style.b
+  ta_Flags.b
+End NEWTYPE
+
+NEWTYPE.MyScreenMode
+  DisplayID.l
+  DisplayWidth.w
+  DisplayHeight.w
+  DisplayDepth.w
+  OverscanType.w
+  AutoScroll.l
+End NEWTYPE
+
+NEWTYPE.symbol
+  SymbolOrder.q       ; symbol numbers in random order
+  AskingOrder.q       ; asking order
+  txt$                ; symbol text
+  ;w.l                 ; symbol text's width in pixels
+  x.w                 ; symbol x coord in symbolwindow
+  y.w                 ;        y
+End NEWTYPE
+
+NEWTYPE.winitems
+  no.q    ; windownumber
+  x.w
+  y.w
+  w.w     ; width
+  h.w     ; height
+End NEWTYPE
+
+NEWTYPE.gad
+  x.w
+  y.w
+  id.w
+  txt$
+End NEWTYPE
+
+NEWTYPE .person
+  info$[3]
+  ;-name$        ; player name                      30 chars
+  ;-numscores.w
+  ;-hiscores$    ; #
+  ;luokka$      ;                                   4
+
+  ;err.w      ; over 32000 ;) hmm, 3200           5
+  ;seconds.b  ; 0-59 how much time used in game   3
+  ;minutes.b  ; 0-59                              3
+  ;thour.b    ; 0-23                              3
+  ;tmin.b     ; 0-59                              3
+  ;tdate.b    ; 1-31                              3
+  ;tmonth.b   ; 1-12                              3
+  ;tyear.w     ; 1995                              5
+
+  ;selected.b      ; selected to delete?
+  listsort.l      ; sort field .w or .l
+End NEWTYPE
+
+NEWTYPE.playinfo
+  luokka$
+  errors.w
+  minutes.b:seconds:thour:tmin:twday:tdate:tmonth
+  tyear.w
+End NEWTYPE
+
+
+CNIF #errhandler=On
+  DEFTYPE .ezrequest errz
+
+  SetErr
+    PutReg d0,err.l
+    err$=Mki$(40)+Chr$(12)+Peek$(err)+Mki$(0)
+    DisplayAlert_ 0,&err$,20:End
+  End SetErr
+CEND
+
+
+DEFTYPE.playinfo p
+
+Dim g.gad(4)
+
+;Dim List people.person(#extrapeople+extratest)
+
+
+Dim day$(7):Restore daynames:For i=0 To 6:Read day$(i):Next
+;Dim mon$(12):Restore monthnames:For i=1 To 12:Read mon$(i):Next
+
+DEFTYPE.MyScreenMode *mysm
+
+DEFTYPE.TA *mytext
+
+DEFTYPE.s source,dest,koulu,screentitle,fi,filename
+DEFTYPE.winitems picw,symbolw,textw,titlew
+DEFTYPE.w count,x,y,i,t,errors,scounter,pen1,pen2,minutes,seconds
+DEFTYPE.w numpeople,numresults,maxsymbols
+; temp variables (errors = wrong hits)
+DEFTYPE.l Sekunti,Mikrosek,NSekunti,NMikrosek,dummy,ev
+DEFTYPE.b exit,clockon,symbolwopen,doR2G
+
+MaxLen fi$=108
+screentitle$="Aika-arvot v0.23 (19.6.-95) "+Chr$(169)+" Lauri Ojansivu"
+
+koulu$="Testailijan ala-aste"
+.names
+g(1)\x=491,206,50,"  Uusi pelaaja   "
+g(2)\x=491,218,51,"    Uusi peli    "
+g(3)\x=491,230,52,"      Lopeta     "
+g(4)\x=491,194,53,"      Cheat      "  ; 242
+
+
+If ExecVersion<36
+  pen1=#ctgrey
+  pen2=#cblack ; DPen & BPen for KS1.3
+Else
+  pen1=#cblack
+  pen2=#ctgrey ; DPen & BPen for KS2.x
+EndIf
+
+
+;Borders 4,2 : BorderPens pen1,pen2
+;StringGadget #pwin,140,30,0,1,30,240
+;StringGadget #pwin,140,50,0,2,4,32
+;Borders 8,4 : BorderPens pen2,pen1
+;TextGadget #pwin,250,100,0,3," ALOITA PELI "
+
+MenuTitle 0,0,"Tiedosto"
+MenuItem 0,0,0,0,"Lataa uusi peli"
+MenuItem 0,0,0,1,"Tallenna kuvaruutu"
+MenuItem 0,0,0,2,"Lopeta"
+
+
+LoadShape #tbox1,"Aika:Data/AIKAAR.boxbrush_X"
+LoadShape #border,"Aika:Data/symbolborder.brush_X" ;,0
+LoadShape #tborder,"Aika:Data/textborder.brush_X"
+LoadShape #tclock,"Aika:Data/SmallClock2.brush"
+
+;LoadShapes 10,38,"Tempdisk:Shapes.Inc"
+; AutoCookie defaults on, no need to MakeCookie :)
+LoadPalette 0,"Aika:Data/Peli.palette"
+
+picw\no=0,0,11,640,245
+symbolw\no=0,41,41-11,555,157
+textw\no=0,#tborderx+4,#tbordery+2,ShapeWidth(#tborder)-8,ShapeHeight(#tborder)-5 ;226,44
+titlew\no=0,10,4,620,16   ; 3,10,15,620,16
+
+LoadSound 1,"Aika:Data/jeah.sample"
+LoadSound 2,"Aika:Data/oho.sample"
+
+;LoadFont 2,"Aika:fonts/LED2.font",30
+LoadFont 1,"Aika:fonts/Gill.font",16
+LoadFont 0,"topaz.font",8
+
+WBenchToFront_
+WbToScreen 0
+RTEZSetDefaultDirectory 0,"Aika:Pelit"
+RTEZSetDefaultDirectory 1,"Aika:Pelit"
+; 0 LoadFile
+; 1 SaveFile
+; 2 PathRequest
+; 3 MultiLoadFile
+RTEZSetPattern 0,"#?.GAME"
+
+temp$=RTEZLoadFile("Valitse peli","")
+filename$=Left$(temp$,Len(temp$)-5)
+
+If ReadFile(0,filename$+".GAME")
+  FileInput 0
+  maxsymbols=Edit(50)
+  Dim s.symbol(maxsymbols)
+  Dim List temp.w(maxsymbols)     ; temp list for .randomlist
+  For i=0 To maxsymbols-1
+    s(i)\txt=Edit$(50)
+  Next
+  CloseFile 0
+EndIf
+
+LoadShape #allsymbols,filename$+".GFX"
+BitMap #nbitmap,640,256,3 ;ILBMDepth
+Blit #allsymbols,0,0
+
+For t=0 To 3:For i=0 To 6
+    s(count)\x=#x2+i*#xsdw,#y2+t*#ysdw
+    GetaShape count+#g1begin,i*#xsd,t*#ysd,#sw,#sh
+    If count=maxsymbols-1
+      t=4:i=7
+    EndIf
+    count+1
+Next i,t
+
+;Blit #tnumbers,0,0
+;
+;For i=0 To 10
+;  GetaShape i+#g2begin,i*15,0,14,19
+;Next
+
+Free BitMap #nbitmap
+Free Shape #allsymbols
+; Free Shape #tnumbers
+
+; load hiscores
+If OpenFile(0,filename$+".HISCORE")
+   FileInput 0
+   numpeople=Val(Edit$(5))
+   Dim List people.person(numpeople+#extrapeople)
+
+   ClearList people()
+   ResetList people()
+
+   USEPATH people()
+   While NOT Eof(0)
+     If AddLast(people())
+       \info[0]=Edit$(30)
+       \info[1]=Inkey$(2)
+       \info[2]=Inkey$((Cvi(\info[1]))*#scorelen)
+       ;temp$=Edit$(1) ; enter character not needed
+     EndIf
+   Wend
+   WindowOutput 0
+   CloseFile 0
+   FirstItem people()
+Else
+   Dim List people.person(#extrapeople)
+EndIf
+
+
+.Statements
+
+Statement GetInfo{numrec.w}
+    SHARED p,people()       ;,numpeople
+
+    maxitems.w=Cvi(people()\info[1])
+    If numrec<1 OR numrec>maxitems
+      numrec=maxitems
+    EndIf
+    info$=Mid$(people()\info[2],(#scorelen*(numrec-1))+1,#scorelen)
+
+    USEPATH p
+    \luokka=Mid$(info$,1,3)
+    \errors=Cvi(Mid$(info$,4,2))
+    \minutes=Asc(Mid$(info$,6,1))
+    \seconds=Asc(Mid$(info$,7,1))
+    \thour=Asc(Mid$(info$,8,1))
+    \tmin=Asc(Mid$(info$,9,1))
+    \twday=Asc(Mid$(info$,10,1))
+    \tdate=Asc(Mid$(info$,11,1))
+    \tmonth=Asc(Mid$(info$,12,1))
+    \tyear=Cvi(Mid$(info$,13,2))
+End Statement
+
+Statement SymbolR2G{hit} ; Red2Green
+  Use BitMap #rgbitmap
+  Blit #g1begin+hit,0,0
+  ;For x=0 To #sw:For y=0 To #sh
+  ;  If Point(x,y)=#cdred Then Plot x,y,#cgreen
+  ;Next y,x
+  ReMap #cdred,#cgreen,#rgbitmap
+End Statement
+
+Statement updatetext{txt$}
+  SHARED textw
+  USEPATH textw
+  Use Window \no
+  WindowFont 1
+  rp.l=RastPort(\no)
+  txtl.l=Len(txt$)
+  twolines=Instr(txt$,"\")
+  WBox \x,\y,\x+\w,\y+\h,#clgrey
+  WColour #cblack,#clgrey
+  ;win.l=Peek.l(Addr Window(0))
+  If twolines
+    txt1$=Left$(txt$,twolines-1)
+    txt2$=Right$(txt$,txtl-twolines)
+    txtl1.l=Len(txt1$)
+    txtl2.l=Len(txt2$)
+    txtpix1.l=TextLength_(rp,txt1$,txtl1)
+    txtpix2.l=TextLength_(rp,txt2$,txtl2)
+    WLocate \x+Int((\w-txtpix1)/2),\y+6  ; 13 ;217
+    Print txt1$
+    WLocate \x+Int((\w-txtpix2)/2),\y+#fonth+12 ;-((\h-2*#fonth)/3+#fonth)
+    Print txt2$
+  Else
+    txtpix.l=TextLength_(rp,txt$,txtl)
+    WLocate \x+Int((\w-txtpix)/2),\y+Int((\h-#fonth)/2)
+    Print txt$
+  EndIf
+End Statement
+
+Statement updatetitle{txt$} ; update title above symbolpics
+  SHARED titlew
+  USEPATH titlew : Use Window \no : WindowFont 1
+  rp.l=RastPort(\no)
+  txtl.l=Len(txt$)
+  ;win.l=Peek.l(Addr Window(0))
+  txtpix.l=TextLength_(rp,txt$,txtl)
+  WColour #cwhite,#cgreen
+  WBox \x,\y,\x+\w,\y+\h,#cgreen
+  ;InnerCls #cgreen
+  ; fonth=13  ; can be used in this statement if needed
+  WLocate \x+Int((\w-txtpix)/2),\y+Int((\h-#fonth)/2)  ; 13 ;217
+  Print txt$ ;+Str$(test.l)
+End Statement
+
+
+Statement updateclock{minutes,seconds}
+  SHARED picw
+  Use Window picw\no
+  Format "00"
+  WJam 1: WLocate #minx,#miny : WindowFont 0 : WColour #cblack,#cdgrey ; 33,206
+
+  ;tempmin$=Str$(minutes)
+  ;tempsec$=Str$(seconds)
+  ;If Len(tempmin$)=2
+  ;  WBlit #g2begin+Val(Left$(tempmin$,1)),#minx1,#miny
+  ;Else
+  ;  WBlit #g2begin,#minx1,#miny
+  ;EndIf
+  ;WBlit #g2begin+Val(Right$(tempwin$,1)),#minx2,#miny
+  ;
+  ;If Len(tempsec$)=2
+  ;  WBlit #g2begin+Val(Left$(tempsec$,1)),#secx1,#miny
+  ;Else
+  ;  WBlit #g2begin,#secx1,#miny
+  ;EndIf
+  ;WBlit #g2begin+Val(Right$(tempwin$,1)),#secx2,#miny
+
+  Print Str$(minutes),":",Str$(seconds)
+End Statement
+
+Statement getplayer{}
+  SHARED player$,luokka$,koulu$,people(),day$(),mon$(),p
+  updatetitle{koulu$}  ; Koulun nimi ala-aste nkyviin
+  bodytext$="Kirjoita nimesi"+Chr$(10)
+  bodytext$+"(korkeintaan 30 kirjainta)"
+  player$=""
+  While player$=""
+    player$=RTEZGetString("Pelaajan nimi",bodytext$,30)
+  Wend
+  bodytext$="Kirjoita luokkasi"+Chr$(10)
+  bodytext$+"(esim. 2c)"
+  luokka$=""
+  While luokka$=""
+    luokka$=RTEZGetString("Pelaajan luokka",bodytext$,3)
+  Wend
+
+  found.b=False
+  ResetList people()
+  While NextItem(people())  ; go trough the list if player has
+    If people()\info[0]=player$        ; played this game before
+      PushItem people()
+      found=True
+      Pop If:Pop While
+    EndIf
+  Wend
+
+  If found=False
+    If AddLast(people())   ; add new player to the end of list
+      people()\info[0]=player$       ; and sort list later
+    ;Else ;-> WOW! More than 200 players per day :)
+    EndIf
+    found=True
+    p\luokka="",0,0,0,0,0,0,0,0,0
+  Else
+    PopItem people()
+    ret=RTEZRequest("Jipii!","Olet pelannut aikaisemmin","Jep")
+
+    GetInfo{0}
+
+    USEPATH p
+    bodytext$="  Pelaaja: "+player$+Chr$(10)
+    bodytext$+"   Luokka: "+\luokka+Chr$(10)
+    bodytext$+"Pelipiv: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+    bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)+Chr$(10)+Chr$(10)
+    bodytext$+"     Aika: "+UStr$(\minutes)+" min "+UStr$(\seconds)+" sek "+Chr$(10)
+    bodytext$+" Virheit: "+UStr$(\errors)
+    ret=RTEZRequest("Edelliset tulokset",bodytext$,"Aloita peli")
+    \luokka="",0,0,0,0,0,0,0,0,0
+  EndIf
+  updatetitle{koulu$+"   "+luokka$+"   "+player$}
+End Statement
+
+;    bodytext$=player$+" "+\luokka+" "
+;    bodytext$+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+;    bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)+Chr$(10)
+;    bodytext$+"Aika: "+UStr$(\minutes)+" min "+UStr$(\seconds)+" sek "+Chr$(10)
+;    bodytext$+"Virheit: "+UStr$(\errors)
+
+;Statement getplayer2{}
+;  SHARED symbolw,init,pen1,pen2,clockon,dummy,player$,luokka$
+;  USEPATH symbolw
+;  Window #pwin,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,#pwin
+;  WindowFont 0 : WJam 0 : WColour #cgreen
+;  WLocate 3,10 : Print Centre$("Uuden pelaajan valinta",70)
+;  WColour #cblack
+;  WLocate 60,32 : Print "  Nimi:"
+;  WLocate 60,52 : Print "Luokka:"
+;  ClearString #pwin,1
+;  ClearString #pwin,2
+;  Redraw #pwin,2
+;  ActivateString #pwin,1
+;
+;  exit.b=False
+;  Repeat
+;    ev.l=WaitEvent
+;    Select ev.l
+;    Case 64 ; gadget up
+;      Select GadgetHit
+;        Case 1
+;          player$=StringText$(#pwin,1)
+;          ;Redraw #pwin,1
+;          ActivateString #pwin,2
+;        Case 2
+;          luokka$=StringText$(#pwin,2)
+;          Redraw #pwin,2
+;      End Select
+;    End Select
+;  Until GadgetHit=3
+;  CloseWindow #pwin
+;
+;End Statement
+
+;.Functions
+;
+;Function.l lrequest{Title$,BodyText$,GadgetText$}
+;  ret.l=RTEZRequest(Title$,BodyText$,GadgetText$)
+;
+;  Function Return ret.l
+;End Function
+;
+;
+;Function$ {Title$,BodyText$,MaxChars.w}
+;  ;Title$,BodyText$,MaxChars.w,[DefaultString]
+;  While sRet$=""
+;    sRet$=RTEZGetString(Title$,BodyText$,MaxChars.w)
+;
+;    If sRet$=""
+;      ret=RTEZRequest("Hupsis","Sinun tytyy kirjoittaa jotain!","Yritn uudestaan")
+;    Else
+;      ;bodytext$="Kirjoitit '"+sRet$+"'"
+;      ;ret=RTEZRequest("RTEZGetString",bodytext$,"I Sure Did")
+;    EndIf
+;  Wend
+;  Function Return sRet$
+;End Function
+;
+;Function$ LoadFile{}
+;  name$=RTEZLoadFile("Pick a File",fi$)
+;
+;  While name$=""
+;    ;If name$<>""
+;    ;  bodytext$="You picked '"+name$+"'"
+;    ;  ret=RTEZRequest("Request",bodytext$,"How True")
+;    ;Else
+;      ret=RTEZRequest("Request","You didn't pick a file","S_o What?")
+;    ;EndIf
+;    name$=RTEZLoadFile("Pick a File",fi$)
+;  Wend
+;
+;  Function Return name$
+;End Function
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; calculate button image (inside click image)
+;; and button click coordinates
+;;
+;      NO BITMAP TRICKS -> SAVE TIME
+;
+;BitMap #nbitmap,640,256,3 ;ILBMDepth
+;Use BitMap #nbitmap
+;Blit #allsymbols,0,0
+;
+;Use BitMap #nbitmap
+
+Gosub randomlist  ; make gadgets
+
+BitMap #rgbitmap,#sw,#sh,3
+
+Screen 1,0,0,640,256,3,$8000,screentitle$,pen1,pen2
+;ILBMDepth,ILBMViewmode=Hires nolace!
+; 0,11,screentitle$ ; 3 bitplanes (=16 vri) + 8 (=hires) = 11
+
+;For i=0 To 15:RGB i,0,0,0:Next
+Use Palette 0
+
+.windows
+
+DefaultIDCMP $8|$10|$20|$40|$200|$400
+USEPATH picw
+Window \no,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,\no ; 3,4 ; gadgets
+SetMenu 0
+CatchDosErrs
+WBlit #border,#borderx,#bordery    ;title&symbolborders
+WBlit #tborder,#tborderx,#tbordery
+WBlit #tclock,#clockx,#clocky
+
+
+ScreensBitMap 1,0
+Use BitMap 0
+FloodFill 0,20,#cblue
+FreeFill
+Use Window \no
+
+updateclock{0,0}
+
+symbolwopen=False
+getplayer{}
+Gosub newgame
+
+.main
+exit=False
+
+Repeat
+  ; wait for something to happen..
+  ev=Event
+  Select ev
+  ;If Joyb(0)<>0
+  ;  zonehit.w=Zone(EMouseX,EMouseY)
+  ;Case 16
+  ;Use Window 0 : WLocate 0,0
+  ;Print "Mouse X "+Left$(Str$(EMouseX),5)+" Y "+Left$(Str$(EMouseY),5)
+
+  Case 32 ; gadget down
+    ;  Print "Gadget ",GadgetHit," in window ",EventWindow," Pushed down"
+    Select GadgetHit
+    Case hit: Sound 1,2 : doR2G=True
+    Case 50
+    Case 51
+    Case 52
+    Default : Sound 2,4 : errors+1
+    End Select
+  Case 64 ; gadget up
+    Select GadgetHit
+    Case hit: USEPATH symbolw
+              BitMaptoWindow #rgbitmap,\no,0,0,s(s(hit)\SymbolOrder)\x+4+\x,s(s(hit)\SymbolOrder)\y+2+\y,#sw,#sh
+              Gosub newhit
+    Case 50 : getplayer{} : Gosub newgame
+    Case 51 : Gosub newgame
+    Case 52 : exit=True
+    Case 53 : USEPATH p
+              temp$=Date$(SystemDate)
+              \thour=Hours
+              \tmin=Mins
+              \twday=WeekDay
+              \tdate=Days
+              \tmonth=Months
+              \tyear=Years
+              askcount=maxsymbols-1:minutes=4:seconds=8:errors=2
+              Gosub maali
+    Default
+    End Select
+  Case 256
+    ;Select MenuHit
+    ;Case 0
+      Select ItemHit
+      Case 0:         ; ladataan uusi peli
+      Case 1: ;SaveScreen 0,"ram:ruutu.iff" ; tallennetaan kuvaruutu
+      Case 2: End     ; lopetetaan
+      End Select
+    ;End Select
+    ;windowtitle$="Gadget "+Str$(GadgetHit)+" in window "+Str$(EventWindow)+" Released   "
+    ;Case 512 ; close window
+    ;  Pop Select : End
+  End Select
+
+  Select clockon
+  Case True
+    dummy = CurrentTime_ (&NSekunti,&NMikrosek)     ; aika ?
+    minutes=Int((NSekunti-Sekunti)/60)     ; 60*50
+    seconds=(NSekunti-Sekunti)-minutes*60
+    updateclock{minutes,seconds}
+  Case False
+    updateclock{minutes,seconds}
+  End Select
+
+
+  ;WTitle Left$(windowtitle$,20)+player$+" aika "+Str$(minutes)+" min"+Str$(seconds)+" s",screentitle$
+  ; get ready for print...
+
+Until exit.b=True
+
+End
+
+.newgame
+
+If symbolwopen=True
+  Gosub randomlist
+Else
+  symbolwopen=True
+EndIf
+
+Gosub newhit
+
+;If symbolwopen=False
+;  USEPATH symbolw
+;  Window \no,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,\no
+;  SetMenu 0
+;  symbolwopen=True
+;EndIf
+
+USEPATH symbolw
+Use Window \no
+
+For i=0 To maxsymbols-1
+  WBlit #g1begin+i,s(s(i)\SymbolOrder)\x+4+\x,s(s(i)\SymbolOrder)\y+2+\y
+Next
+
+minutes=0 : seconds=0 : clockon=True
+
+USEPATH p
+temp$=Date$(SystemDate)
+\thour=Hours
+\tmin=Mins
+\twday=WeekDay
+\tdate=Days
+\tmonth=Months
+\tyear=Years
+
+dummy = CurrentTime_ (&Sekunti,&Mikrosek)     ; aika ?
+
+Return
+
+
+.dgadget
+  Disable picw\no,g(sel)\id
+  Redraw picw\no,g(sel)\id
+Return
+
+.egadget
+;120,16
+  WBox g(sel)\x+1,g(sel)\y+1,g(sel)\x+121,g(sel)\y+17,#clgrey
+  Enable picw\no,g(sel)\id
+  Redraw picw\no,g(sel)\id
+Return
+
+
+.randomlist
+
+  For i=0 To maxsymbols-1
+    s(i)\SymbolOrder=i
+    s(i)\AskingOrder=i
+  Next
+
+  For i=0 To maxsymbols-1
+    Exchange s(i)\SymbolOrder,s(Int(Rnd(maxsymbols-1)))\SymbolOrder
+    Exchange s(i)\AskingOrder,s(Int(Rnd(maxsymbols-1)))\AskingOrder
+  Next
+
+
+;  For loop=1 To 2
+;
+;    scounter=0
+;    ResetList temp()
+;    ClearList temp()
+;    While AddItem(temp())
+;      temp()=scounter
+;      scounter+1
+;      ;NPrint "AddItem "+Str$(scounter)
+;    Wend
+;
+;    scounter=0:exit2.b=False ;:loop.l=0
+;
+;
+;    Repeat
+;      ;NPrint "Loop "+Str$(loop.l)+" K "+Str$(k)
+;      item=Int(Rnd(maxsymbols))       ; item is random number
+;      ResetList temp()        ;
+;      While NextItem(temp())  ; let's see if we can find it
+;        If temp()=item        ; if current item
+;          s(scounter)\SymbolOrder=item   ; "save" found item
+;          KillItem temp()              ; and kill it
+;          If scounter=maxsymbols      ; check if all done
+;            exit2=True
+;          Else
+;            scounter+1
+;          EndIf
+;        EndIf
+;      Wend
+;      ;loop.l+1
+;    Until exit2=True
+;
+;    If loop=1
+;      For loop2=0 To maxsymbols               ; copy Symbol->AskingOrder
+;        s(loop2)\AskingOrder=s(loop2)\SymbolOrder ; so we can use same routine
+;      Next                                    ; again, and get 2 random
+;    EndIf                                     ; lists
+;
+;  Next
+
+  USEPATH symbolw      ;  CloseWindow \no
+  Free GadgetList \no
+
+  ; first gadget is first item in SymbolOrder table
+  Borders On : Borders 5,5 : BorderPens pen2,pen1
+  For i=0 To maxsymbols-1
+    ShapeGadget \no,s(s(i)\SymbolOrder)\x+\x,s(s(i)\SymbolOrder)\y+\y,0,i,#tbox1     ;,#g1begin+i,#g2begin+i
+    ;SetZone \no,s(s(i)\SymbolOrder)\x,s(s(i)\SymbolOrder)\y,s(s(i)\SymbolOrder)\x+#sw,s(s(i)\SymbolOrder)\y+#sh
+  Next
+
+  GadgetJam 1 ;:GadgetPens pen1,pen2
+  Borders On
+  Borders 2,2   ;14,5
+  BorderPens pen2,pen1
+
+  For i=1 To 4:TextGadget picw\no,g(i)\x,g(i)\y,0,g(i)\id,g(i)\txt:Next
+
+
+  ; just blit symbols to window, no close&open needed
+
+Return
+; ShapeGadget 1,s(s(i)\SymbolOrder)\x,b(SymbolOrder(i))\y,0,i,#g1begin+i,#g2begin+i
+;  Window \no,\x,\y,\w,\h,$800|$1000,"",pen1,pen2,\no ; symbols
+
+
+.newhit
+  Select askcount
+  Case maxsymbols
+    Gosub maali
+  Default
+    ;hit=SymbolOrder(AskingOrder(askcount))
+    hit=s(s(askcount)\AskingOrder)\SymbolOrder
+    SymbolR2G{hit}
+    askcount+1
+    updatetext{s(hit)\txt}
+  End Select
+Return
+
+.maali
+    clockon=False
+
+    Format "##"
+
+    updatetext{"MAALI !"}
+
+    BodyText$="    Aika: "+Str$(minutes)+" Min "+Str$(seconds)+" sek "+Chr$(10)
+    BodyText$+"Virheit: "+Str$(errors)
+    ret=RTEZRequest("Tulokset",BodyText$,"OK")
+
+    USEPATH p
+    \luokka=luokka$
+    \minutes=minutes
+    \seconds=seconds
+    \errors=errors
+
+    people()\info[2]+LSet$(\luokka,3)+Mki$(\errors)+Chr$(\minutes)+Chr$(\seconds)
+    people()\info[2]+Chr$(\thour)+Chr$(\tmin)+Chr$(\twday)+Chr$(\tdate)+Chr$(\tmonth)+Mki$(\tyear)
+    people()\info[1]=Mki$(Len(people()\info[2]) / #scorelen)
+
+    Gosub savescores
+    updatetext{"TULOKSET\TALLENNETTU"}
+    askcount=0
+Return
+
+
+
+.savescores
+
+   If Exists(filename$+".HISCORE")               ; if there is previous file
+      source$=filename$+".HISCORE"+Chr$(0)         ; then we don't save over it
+      dest$=filename$+".HISCORE.old"+Chr$(0) ; - we rename it!
+      ;DeleteFile_ temp$
+      success.b=Rename(source$,dest$)
+   EndIf
+
+
+   If OpenFile(0,filename$+".HISCORE")
+      FileOutput 0
+
+      PushItem people()
+      ResetList people()
+      numpeople=0
+      While NextItem(people())
+        numpeople+1
+      Wend
+      NPrint numpeople
+
+      ResetList people()
+      While NextItem(people())
+        NPrint people()\info[0]
+        Print people()\info[1]
+        Print people()\info[2]; name,numscores,hiscores
+      Wend
+
+      CloseFile 0
+      WindowOutput 0
+      KillFile dest$ ; new file saved OK, deleting old file
+      PopItem people()
+   EndIf
+Return
+
+.data
+
+daynames:
+Data$ Sunnuntai,Maanantai,Tiistai,Keskiviikko,Torstai,Perjantai,Lauantai
+
+;monthnames:
+;Data$ "Tam","Hel","Maa","Huh","Tou","Kes","Elo","Syy","Lok","Mar","Jou"
+
+
+;Print " ",LSet$(luokka$,3),Mki$(err.w),Chr$(seconds),Chr$(minutes)
+;Print Chr$(thour),Chr$(tmin),Chr$(tdate),Mki$(tyear)
+
+
+;.here
+;USEPATH p
+;NPrint \luokka+" luokka ",\errors," errors ",\minutes," minutes ",\seconds," seconds "
+;NPrint \thour," h ",\tmin," mins ",\tdate," date ",\tmonth," month ",\tyear," year "
+;MouseWait
+;End
+
+
+
+
+;.oldsave
+;    If OpenFile(0,filename$)
+;      FileOutput 0
+;      FileSeek 0,Lof(0)
+;      NPrint LSet$(player$,30)+Str$(minutes)+" min "+Str$(seconds)+" sek "+RSet$(Str$(errors),4)+" virh."
+;      CloseFile 0
+;    EndIf
+
+
+
+;        Print Left$(\name,30),Right$(\class,4)...
+;        \name=Edit$(30)
+;        \class=Edit$(4)
+;        \err=Val(Edit$(5))
+;        For i=0 To 5 : \tinfo=Val(Edit$(3)) : Next
+;        \tyear=Val(Edit$(5))
+;
+;
+;        For i=0 To #num-1:NPrint \info[i]:Next
+;        t+1
+
+
+
+;
+;.open
+;Statement open{}
+;   SHARED people(),filename$  ;,currententry,lastentry
+;   ;SHARED numleft,subscriber,experience,udi
+;
+;   If OpenFile(0,filename$)
+;      FileInput 0
+;      ClearList people()
+;      ResetList people()
+;      t=0
+;      While NOT Eof(0)
+;        If AddLast(people())
+;         For i=0 To #num-1:\info[i]=Edit$(128):Next
+;
+;         ;   For i=0 To 8:\info[i]=Edit$(80):Next
+;         ;   For i=9 To 10:\info[i]=Edit$(80):Next
+;         ;
+;         ;   \numleft=Val(Edit$(80))
+;         ;   \subscriber=Val(Edit$(80))
+;         ;
+;         ;   t$=Edit$(80)
+;         ;
+;            t+1
+;         EndIf
+;      Wend
+;      WindowOutput 0
+;      CloseFile 0
+;      ;currententry=0
+;      ;lastentry=t-1
+;      ;FirstItem people()
+;      ;fillstrings{1,0}
+;      ;fillstrings{0,1}
+;      ;GTChangeList 0,19
+;      ;GTChangeList 0,19,people()
+;   EndIf
+;End Statement
+
+
+;.sortpeople
+;Statement sortpeople{}
+;   SHARED people()  ; ,currententry
+;
+;   ResetList people()
+;   i=0
+;   While NextItem(people())
+;      \listsort=Cvl(\info[0])
+;      i+1
+;   Wend
+;   pnum=i
+;
+;   SortList people(),SizeOf .person\listsort
+;   ResetList people()
+;
+;   ;currententry=0
+;   ;FirstItem people()
+;   ;fillstrings{1,0}
+;   ;fillstrings{0,1}
+;   ;GTChangeList 0,19
+;   ;GTChangeList 0,19,people()
+;
+;End Statement
+
+;While Joyb(1)=0
+;  VWait 2
+;  WTitle "","X "+Str$(WMouseX)+" Y "+Str$(WMouseY)
+;Wend
+;
+;End
+
+;While NSekunti-Sekunti < 10 ; /10 Sekunden/ Aloitus sek - nykyinen sek
+;  dummy = CurrentTime_ (&NSekunden,&NMikrosek)     ; aika ?
+;  If xx = InnerWidth/2-40 AND yy = InnerHeight/2-5
+;     WLocate xx , yy
+;     Print "Zeit = ",NSekunden-Sekunden," s  "    ; show time
+
+;.getname
+;WindowFont 0
+;;MaxLen d$=120
+;result=RTEZRequest("Kysymys","What's up doc?","Okee Dokee!")
+;WLocate 0,0 : Print result
+;Return
+
+;NEWTYPE.wins
+;  picw.winitems
+;  symbolw.winitems
+;  textw.winitems
+;  titlew.winitems
+;End NEWTYPE
+;DEFTYPE .wins w       ; this group isn't necessary
+
+
+;; WOutline draws 3d-border to hires symbolshape
+;Statement WOutline{x1,y1,x2,y2,HighLite,Shadow}
+;;  Wline x1,y1,x2-1,y1,x2-1,y2-1,x1,y2-1,x1,y1,HighLite
+;;  Wline x1+1,y1+1,x2,y1+1,x2,y2,x1+1,y2,x1+1,y1+1,Shadow
+;;End Statement
+;
+;; |------------------<
+;; |-----------------   1. up
+;;
+;; v/\/\/\
+;; |||||||
+;; |||||||   2. left side
+;; |||||||
+;; ||||\/|
+;; \/\/
+;;
+;; >--------------------|  3. bottom side
+;; ---------------------|
+;
+;;                       /
+;;                      /|
+;;                    /\||   4. right side
+;;                    ||||
+;;                    ||||
+;;                    ||||
+;;                     \/V
+;
+;Wline x2-3,y1-2,x1-4,y1-2,x1-4,y1-1,x2-1,y2-1,HighLite
+;Wline x1-4,y1,x1-4,y2+2,x1-3,y2+2,x1-3,y1,x1-2,y1,x1-2,y2+1,x1-1,y2+1,x1-1,y1,HighLite
+;Wline x1,y2+1,x2+4,y2+1,x2+4,y2+2,x1-1,y2+2,Shadow
+;Wline x2+1,y2,x2+1,y1,x2+2,y1,x2+2,y2,x2+3,y2,x2+3,y1-1,x2+4,y1-2,x2+4,y2,Shadow
+;Plot x2+2,y1-1,#clgrey
+;Plot x1-2,y2+2,#clgrey
+;End Statement
+
+;.cheat
+;If askcount=27 AND mennyt=0
+;  sel=3:Gosub dgadget
+;  mennyt=1
+;Else
+;  If mennyt=0
+;    Gosub newhit
+;  EndIf
+;EndIf
+
+;If testi=0
+;  sel=1
+;  Gosub dgadget
+;  testi=1
+;Else
+;  sel=1
+;  Gosub egadget
+;  testi=0
+;EndIf
+;Return
+
+;If init=True
+;  Use Palette 0   ; show screen if startup done
+;  init=False
+;EndIf
+
+;AbsMouse 250,190
+;ClickButton 0
+
+
+; wow this is one painful demo of Australian humour, if your mouse
+; button is broken don't run this!
+
+
+;bodytext$="Welcome to ReqTools for Blitz Basic II!"+Chr$(10)
+;bodytext$+"---------------------------------------"+Chr$(10)+Chr$(10)
+;bodytext$+"This little demonstration will show you the features"+Chr$(10)
+;bodytext$+"of the EZ requesters that have been implemented."
+;ret.l=RTEZRequest("Hello!!",bodytext$,"Show Me")
+
+
+  ;ret=RTEZRequest("Request",bodytext$,"Great|So-So|Rubbish")
+  ;
+  ;Select ret
+  ;  Case 0:
+  ;    ret=RTEZRequest("Request","Too bad, I really hoped you'd like it.","Tough")
+  ;  Case 2:
+  ;    ret=RTEZRequest("Request","Try running the demo again...","Ok")
+  ;  Case 1:
+  ;    ret=RTEZRequest("Request","I'm really happy for you, then.","Thanks")
+  ;End Select
+
+;bodytext$="Another (optional) feature is to have the requester be able"+Chr$(10)
+;bodytext$+"to move to the mouse pointer, like this."+Chr$(10)+Chr$(10)
+;bodytext$+"RTEZRequest(Title$,BodyText$,GadgetText$,ReqPosition)"
+;ret=RTEZRequest("Request",bodytext$,"Impressive",#REQPOS_POINTER)
+;
+;bodytext$="Further optional features are to have text centered"+Chr$(10)
+;bodytext$+"within the requester, and you can also set"+Chr$(10)
+;bodytext$+"any of the gadgets below as the 'DefaultResponse'"+Chr$(10)
+;bodytext$+"(What happens when you hit the Return key)"+Chr$(10)+Chr$(10)
+;bodytext$+"RTEZRequest(Title$,BodyText$,GadgetText$,ReqPos,DefResponse,Flags)"
+;ret=RTEZRequest("Request",bodytext$,"Neat|Cool|Hey, Man!",#REQPOS_TOPLEFTSCR,0,#EZREQF_CENTERTEXT)
+
+;ret=RTEZRequest("Shortcuts",bodytext$,"_Ok|I _See")
+
+
+
+
+;Function.l getlong{Title$,BodyText$}
+;  ; Title$,BodyText$,[,DefaultValue]
+;  ret.l=RTEZGetLong("Enter number","Please enter a number")
+;  Function Return ret.l
+;End Function
+;
+;
+;Function.l getlongrange{Title$,BodyText$,Pienin,Suurin}
+;  ; [,DefaultValue]
+;  ret.l=RTEZGetLongRange(Title$,BodyText$,Pienin,Suurin)
+;  Function Return ret.l
+;End Function
+;
+;
+;Function FlagsRequest{}
+;  ret=RTEZFlagsRequest("Insert A Disk",bodytext$,"I don't think so",$8000)
+;
+;  If ret=$8000
+;    ret=RTEZRequest("Well!","You put in a disk!","So I Had One Lying Around")
+;  Else
+;    ret=RTEZRequest("Request","You didn't put a disk in!","No Way!")
+;
+;    bodytext$="Well, this is another ReqTools feature.  You can have a requester"+Chr$(10)
+;    bodytext$+"with NO gadgets, just an IDCMP flag."+Chr$(10)+Chr$(10)
+;    bodytext$+"Now you'll HAVE to insert a disk!"
+;
+;    ret=RTEZFlagsRequest("Insert A Disk - NOW!",bodytext$,"",$8000)
+;
+;    ret=RTEZRequest("You put in a disk!","See?  I told you so.","Yeah, Don't Rub It In")
+;  EndIf
+;  Function Return ret
+;End Function
+
+
+;bodytext$="Number Four:"+Chr$(10)
+;bodytext$+"The File Requester"+Chr$(10)+Chr$(10)
+;bodytext$+"RTEZLoadFileRequest(Title$,FileName$)"+Chr$(10)
+;bodytext$+"RTEZSaveFileRequest(Title$,FileName$)"
+;
+;ret=RTEZRequest("Request",bodytext$,"I Want T_o See This")
+;
+
+;bodytext$="The SaveFile request is a bit different."
+;ret=RTEZRequest("Request",bodytext$,"Let's Have A L_ook")
+;name$=RTEZSaveFile("Pick a File",fi$)
+;
+;If name$<>""
+;  bodytext$="You picked '"+name$+"'"
+;  ret=RTEZRequest("Request",bodytext$,"You're Go_od At This, Aren't You?")
+;Else
+;  ret=RTEZRequest("Request","You didn't pick a file","S_o What?")
+;EndIf
+
+;bodytext$="Both the LoadFile and SaveFile requesters have their"+Chr$(10)
+;bodytext$+"directories in seperate buffers, so you are not continually"+Chr$(10)
+;bodytext$+"waiting for them to reload the directories."+Chr$(10)+Chr$(10)
+;bodytext$+"With a simple command, you can also enable pattern matching."
+
+;ret=RTEZRequest("Request",bodytext$,"This I Want T_o See")
+;
+;pat$=""
+;While pat$=""
+;  pat$=RTEZGetString("Pattern Request","Please enter a pattern",10,"#?")
+;Wend
+;
+;RTEZSetPattern 0,pat$
+;
+;name$=RTEZLoadFile("Pick a File",fi$)
+;
+;If name$<>""
+;  bodytext$="You picked '"+name$+"'"
+;  ret=RTEZRequest("Request",bodytext$,"It W_orks!")
+;Else
+;  ret=RTEZRequest("Request","You didn't pick a file","So What?")
+;EndIf
+;
+;bodytext$="Another File Requester available is the Path requester"+Chr$(10)+Chr$(10)
+;bodytext$+"RTEZPathRequest(Title$)"
+;
+;ret=RTEZRequest("Request",bodytext$,"Get _On With It")
+;
+;name$=RTEZPathRequest("Pick a Path...")
+;
+;If name$<>""
+;  bodytext$="You picked '"+name$+"'"
+;  ret=RTEZRequest("Request",bodytext$,"This Is S_o Impressive")
+;Else
+;  ret=RTEZRequest("Request","You didn't pick a path","Big Deal")
+;EndIf
+;
+;bodytext$="Yet another FileRequester is the MultiFile requester"+Chr$(10)
+;bodytext$+"This allows you to pick a number of files, and these are"+Chr$(10)
+;bodytext$+"returned in a linked list."+Chr$(10)+Chr$(10)
+;bodytext$+"Look at all the gadgets you get now!"+Chr$(10)
+;bodytext$+"Pick a few files..."+Chr$(10)+Chr$(10)
+;bodytext$+"FileList=RTEZMultiLoadFile(Title$)"
+;ret=RTEZRequest("Yet More Information",bodytext$,"This Is Great!")
+;
+;ret=RTEZMultiLoadFile("Select file(s)")
+;
+;If ret
+;  name$=RTNextPathEntry
+;  FileCounter.w=1
+;  While name$<>"" AND ret
+;    title$="File #"+Str$(FileCounter)
+;    bodytext$="File Name:"+name$
+;    ret=RTEZRequest(title$,bodytext$,"Next|I Get The Picture")
+;    name$=RTNextPathEntry
+;    FileCounter+1
+;  Wend
+;Else
+;  ret=RTEZRequest("Request","You didn't pick files!","So Sue Me.")
+;EndIf
+;
+;bodytext$="Naturally, you can enable the pattern matching"+Chr$(10)
+;bodytext$+"and the default path for RTEZMultiLoadFile"
+;ret=RTEZRequest("Information",bodytext$,"Naturally.")
+;
+;ret=RTEZPaletteRequest("Play with these",0)
+;
+;*mytext=RTEZFontRequest("Pick a font")
+;
+;bodytext$="You Picked:"+Chr$(10)
+;bodytext$+"  Name:  "+*mytext\ta_Name+Chr$(10)
+;bodytext$+"  YSize: "+Str$(*mytext\ta_YSize)
+;
+;ret=RTEZRequest("Request",bodytext$,"That's Clever")
+
+
+      ;Print " ",LSet$(luokka$,3),Mki$(err.w),Chr$(seconds),Chr$(minutes)
+      ;Print Chr$(thour),Chr$(tmin),Chr$(tdate),Mki$(tyear)
+
+      ; just to make sure the player is same than last time
+      ; (not other player with same name) we show his previous
+      ; game's results, class etc. and ask if it's correct
+
+      ;RSet$(luokka$,4)+Mki$(errors)+Chr$(seconds)+Chr$(minutes)
+      ;Chr$(thour)+Chr$(tmin)+Chr$(tdate)+Chr$(tmonth)+Mki$(tyear)
+
+      ;rluokka$=Left$(score$,4)
+      ;rerrors=Cvi(Mid$(score$,5,2))
+      ;rseconds=Asc(Mid$(score$,7,1))
+      ;rminutes=Asc(Mid$(score$,8,1))
+      ;rthour=Asc(Mid$(score$,9,1))
+      ;rtmin=Asc(Mid$(score$,10,1))
+      ;rtdate=Asc(Mid$(score$,11,1))
+      ;rtmonth=Asc(Mid$(score$,12,1))
+      ;rtyear=Cvi(Mid$(score$,13,2))
+
+      ;score$=Right$(\info[1],#scorelen)
+      ;bodytext$=\info[0]+" "+rluokka$+" tulokset "+Str$(rtdate)+"."+Str$(rtmonth)+"."+Str$(rtyear)+Chr$(10)+Chr$(10)
+      ;bodytext$+"Aika: "+Str$(rminutes)+" min "+Str$(rseconds)+" sek."
+      ;bodytext$+"Virheit: "+Str$(rerrors)
+
+      ;bodytext$=\info[0]+" "+luokka$+" tulokset "+Str$(tdate)+"."+Str$(tmonth)+"."+Str$(tyear)+Chr$(10)+Chr$(10)
+      ;bodytext$+"Aika: "+Str$(minutes)+" min "+Str$(seconds)+" sek."
+      ;bodytext$+"Virheit: "+Str$(errors)
+
+
+
+
+

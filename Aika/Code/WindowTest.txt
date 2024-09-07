@@ -1,0 +1,211 @@
+WBStartup:NoCli
+;Screen 0,27,"Hires Lace Screen"
+;Screen 0,3,"TEst"
+;WbToScreen 0
+;WBenchToFront_
+
+
+
+NEWTYPE.win:x.q:y:w:h:End NEWTYPE
+NEWTYPE.item
+  x.q:y
+End NEWTYPE
+
+DEFTYPE.win twin,cwin  ; cwin = pseudowindow :)
+
+#cgrey=0
+#cblack=1
+#cwhite=2
+#cblue=3
+#fontw=8 : #fonth=8
+
+numgames=50  ; number of games played
+maxtime=40+2   ; how much time used
+
+num_xcoords=10  ; how many coords in axels
+num_ycoords=10
+
+Dim p.item(numgames)
+Dim z.item(numgames)
+
+For i=0 To numgames
+  p(i)\x=i,Rnd(maxtime)
+  z(i)\x=i,Rnd(maxtime)
+Next
+
+
+
+; idea: kuvio suhteellinen omaan kokoonsa
+
+; arrayssa koordinaatit, joten voidaan valita koordinaatiston 2,1 piste
+
+Function cx2wx{x}                 ; my coord x -> window x
+  SHARED cwin,cxw
+  Function Return x*cxw+cwin\x
+End Function
+
+Function cy2wy{y}                 ; my coord y -> window y
+  SHARED cwin,cyh
+  Function Return y*cyh+cwin\y
+End Function
+
+Function wx2cx{x}                ; window x -> my coord x
+  SHARED cwin,cxw
+  Function Return (x-cwin\x)/cxw
+End Function
+
+Function wy2cy{y}                ; window y -> my coord y
+  SHARED cwin,cyh,maxtime
+  Function Return Abs((y-cwin\y)/cyh-maxtime) ; sama kuin (wy2cy{y}-40)*-1
+End Function                              ; Abs= *-1
+
+Statement cline{x1,y1,x2,y2,col.b}      ; my coord line -> window x1y1x2y2 line
+  SHARED cwin,cxw,cyh
+  Wline cwin\x+x1*cxw,cwin\h-y1*cyh,cwin\x+x2*cxw,cwin\h-y2*cyh,col
+End Statement
+
+
+twin\x=0,0,600,200
+
+USEPATH twin
+
+;Window 0,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400,"A Window",0,1
+
+; ** Source Created by Gadget Tools Box
+; ** 24/06/1995
+
+INCLUDE "bum7_2:GTB/include/Intuition.bbi"
+
+main:
+  ;LoadFont 0,"GTBGadget.font",8
+  ;LoadFont 1,"topaz.font",8
+
+  Use IntuiFont 0
+  MenuGap    2,1
+  SubItemOff 100,0
+  MenuTitle  0,0,"Kaavio"
+  MenuItem   0,$03,0,0,LSet$("  Reunukset",11)
+  MenuItem   0,$00,0,1,"Lopeta"
+
+  ScreenPens    1,2,1,3,1,0,2
+  Screen        0,0,0,682,524,3,$00029004,"Tuloseditori v 1.0",1,2
+  DefaultIDCMP  $00400306
+  Window        0,12,51,642,222,$0000043F,"Tuloskaavio",1,2
+  SetMenu       0
+
+  CloseWin = False
+  Repeat
+    EventType.l = WaitEvent
+    Select EventType
+      Case $2
+        twin\w=WindowWidth,WindowHeight : WCls #cgrey :Gosub DrawCoordSystem
+      Case #IDCMP_CLOSEWINDOW
+        CloseWin = True
+
+      Case #IDCMP_MENUPICK
+        Select MenuHit
+          Case 0
+            Select ItemHit
+              Case 0
+              Case 1 : CloseWin = True
+            End Select
+        End Select
+    End Select
+  Until CloseWin
+  CloseWindow 0
+  CloseScreen 0
+  Free MenuList 0
+  End
+
+
+
+
+
+  Gosub DrawCoordSystem
+
+
+;WColour #cblack,#cgrey
+;While Joyb(0)=0
+;  WLocate 100,100
+;  Print "X ",WMouseX," Y ",WMouseY,"         "
+;Wend
+
+
+exit.b=False
+Repeat
+  ev.l=WaitEvent
+  Select ev
+  Case $2   : twin\w=WindowWidth,WindowHeight : WCls #cgrey :Gosub DrawCoordSystem
+  Case $100 :
+    ;twin\x=WindowX,WindowY,WindowWidth,WindowHeight
+    Select ItemHit
+    Case 0 : If MenuChecked(0,0,0)
+               CloseWindow 0
+               SubIDCMP $00000306
+               DefaultIDCMP $100
+               Window        0,\x,\y,\w,\h,$100|$800|$1000,"",1,2
+             Else
+               CloseWindow 0
+               DefaultIDCMP  $00000306
+               Window        0,\x,\y,\w,\h,$0000043F,"Tuloskaavio",1,2
+             EndIf
+             SetMenu 0
+             Gosub DrawCoordSystem
+    Case 1 : exit=True
+    End Select
+  Case $200 : exit=True
+  End Select
+Until exit=True
+
+;WBenchToBack_
+End
+
+DrawCoordSystem
+
+  cwin\x=twin\x+40,twin\y+20,twin\w-60,twin\h-40
+
+                               ;  | <-cdistx -> |
+                               ; 10           20
+  cdistx=numgames/num_xcoords  ; how many my coords are between showed my coords
+  cdisty=maxtime/num_ycoords   ;
+
+                            ; coord x width (1 my coord unit
+  cxw=(cwin\w-cwin\x)/numgames  ;  = my coord width in window - my coord starting x coord
+  cyh=(cwin\h-cwin\y)/maxtime   ; coord y height
+
+
+
+
+  USEPATH cwin                            ; piirretn koordinaatisto pikselin
+
+  Wline \x-1,\y-16,\x-1,\h+1,\w+5+16,\h+1,#cblack ; vasemmalle ja alas jottei 0,0 kohta
+                                          ; tule koordinaatiston plle
+  t=1
+  Wline \x-5-t,\y-10-t,\x-t,\y-15-t,\x+5-t,\y-10-t,#cblack  ; arrow for y axel
+  Wline \w+15+t,\h-5+t,\w+20+t,\h+t,\w+15+t,\h+5+t,#cblack
+
+
+
+  For x=\x To \w Step cdistx*cxw
+    Wline x,\h+1,x,\h+6,#cblack       ; x-akselin koordinaattien vliviivat
+    num.w=wx2cx{x}                    ; ja numerot
+    numl.w=Len(Str$(num))*#fontw
+    WLocate x-numl/2,\h+#fonth+1
+    Print num
+  Next
+
+  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien vliviivat
+    Wline \x-1,y,\x-6,y,#cblack       ; ja numerot
+    num.w=wy2cy{y}
+    numl.w=Len(Str$(num))*#fonth
+    WLocate \x-numl-8,y-#fonth/2
+    Print num
+  Next
+
+
+  For i=0 To numgames-1                      ; testataan satunnaisilla
+    cline{p(i)\x,p(i)\y,p(i+1)\x,p(i+1)\y,#cblue}   ; arvoilla systeemin toimintaa
+    cline{z(i)\x,z(i)\y,z(i+1)\x,z(i+1)\y,6}
+  Next
+
+Return
