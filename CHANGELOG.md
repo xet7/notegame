@@ -21,6 +21,11 @@ This release adds the following new features:
 - [Updated year at license](https://github.com/xet7/notegame/commit/9fb17884f18a9e86d949b7d6c6b08138c03c1542).
   Thanks to xet7.
 
+and fixes the following bugs:
+
+- [Fixed typo at assign command at readme](https://github.com/xet7/notegame/commit/da5c5c9cf0779bf25adcdb46c52209c006b81304).
+  Thanks to xet7.
+
 Thanks to above GitHub users for their contributions and translators for their translations.
 
 ## 2023-06-15 v0.02 Notegame release
