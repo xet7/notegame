@@ -18,6 +18,13 @@ This release adds the following new features:
   Thanks to xet7.
 - [Added Notes.anim convert script](https://github.com/xet7/notegame/commit/f10658d1cad0e4cc2d5035315fa8152b7d20b228).
   Thanks to xet7.
+- [Added ChangeLog](https://github.com/xet7/notegame/commit/427201a182e13149c7286ee7c15185816d9655ff).
+  Thanks to xet7.
+- [Added TODO](https://github.com/xet7/notegame/commit/6b5c72a135f59feba9babe106d3102a2cfd99b65).
+  Thanks to xet7.
+
+and adds the following updates:
+
 - [Updated year at license](https://github.com/xet7/notegame/commit/9fb17884f18a9e86d949b7d6c6b08138c03c1542).
   Thanks to xet7.
 
