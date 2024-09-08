@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 2023-09-08 v0.03 Notegame release
+## 2024-09-08 v0.03 Notegame release
 
 This release adds the following new features:
 
@@ -16,7 +16,9 @@ This release adds the following new features:
   Thanks to xet7.
 - [Converted IFF Notes.anim to animgif and separate GIF images](https://github.com/xet7/notegame/commit/e0b15436ab70fcb4612ee6e1041febee0f8ff64e).
   Thanks to xet7.
-- [Added Notes.anim convert script](](https://github.com/xet7/notegame/commit/f10658d1cad0e4cc2d5035315fa8152b7d20b228).
+- [Added Notes.anim convert script](https://github.com/xet7/notegame/commit/f10658d1cad0e4cc2d5035315fa8152b7d20b228).
+  Thanks to xet7.
+- [Updated year at license](https://github.com/xet7/notegame/commit/9fb17884f18a9e86d949b7d6c6b08138c03c1542).
   Thanks to xet7.
 
 Thanks to above GitHub users for their contributions and translators for their translations.
