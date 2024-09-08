@@ -142,7 +142,7 @@ Using Blitz Basic 2 https://github.com/nitrologic/blitz2
 ```
 assign add Blitz2: Work:Blitz2
 assign add blitzlibs: Work:Blitz2/blitzlibs
-assign add BL: blitlibs:
+assign add BL: blitzlibs:
 assign add Aika: Work:Blitz2/Aika
 ```
 Or if you have the above in separate textfile like `aika.sh`, you can run that script with:
