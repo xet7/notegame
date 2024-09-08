@@ -1,0 +1,17 @@
+80
+Aika:Data/AIKAAR.boxbrush_X
+Aika:Data/symbolborder.brush_X
+Aika:Data/textborder.brush_X
+Aika:Data/SmallClock2.brush
+Aika:Data/Peli.palette
+Aika:Data/jeah.sample
+Aika:Data/oho.sample
+Aika:fonts/Gill.font
+16
+topaz.font
+8
+Aika:Pelit
+Aika:Pelit
+.GAME
+.GFX
+.HISCORE

@@ -34,7 +34,7 @@ StringGadget 3,247,104,0,#B_MaxAika,4,32
 BorderPens 2,1
 
 ButtonGroup 2
-TextGadget 3,8,13,512,#B_MouseMove=9,"Siirr hiirell"
+TextGadget 3,8,13,512,#B_MouseMove=9,"Siirrä hiirellä"
 TextGadget 3,9,26,512,#B_MouseReSize,"Muuta kokoa"
 Toggle 3,#B_MouseReSize,On
 

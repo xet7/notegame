@@ -22,8 +22,8 @@ WBStartup:NoCli
 #extrapeople=200 ; how many players can play today
 
 
-#addproph=16          ; PropGadgettia alaspin
-;#textdown=0           ; koko tekstialuetta alaspin
+#addproph=16          ; PropGadgettia alaspäin
+;#textdown=0           ; koko tekstialuetta alaspäin
 ;#downpix=8*#textdown
 #downpix=0
 numchars=74
@@ -399,10 +399,10 @@ Statement GetInfo{numrec.w}
 ;  Next
 
     ;people()\txt=LSet$(people()\info[0],10)+\luokka
-    ;people()\txt+" Pelipiv: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+    ;people()\txt+" Pelipäivä: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
     ;people()\txt+" klo "+UStr$(\thour)+":"+UStr$(\tmin)
     ;people()\txt+" Aika: "+UStr$(\minutes)+" m "+UStr$(\seconds)+" s "
-    ;people()\txt+" Virheit: "+UStr$(\errors)
+    ;people()\txt+" Virheitä: "+UStr$(\errors)
 
 
 End Statement
@@ -498,7 +498,7 @@ TextGadget \no,TextX,TextY+TextH+52,512,#G1_Virheet," Virheet "
 TextGadget \no,TextX,TextY+TextH+70,0,#B_Lajittele," Lajittele "
 TextGadget \no,TextX,TextY+TextH+90,0,#B_PoistaValinnat," Poista kaikki valinnat "
 ;GadgetJam 1:GadgetPens #cblack,#cdgrey
-TextGadget \no,TextX+100,TextY+TextH+16,1,#B_Koordinaatisto," Nyt koordinaatistossa " ;  | Sulje koordinaatistoruutu "
+TextGadget \no,TextX+100,TextY+TextH+16,1,#B_Koordinaatisto," Näytä koordinaatistossa " ;  | Sulje koordinaatistoruutu "
 
 bod=.9999:If l>vl Then bod=vl/l
 
@@ -566,7 +566,7 @@ Repeat
         EndIf
       EndIf
     EndIf
-    ; tehdnk rutiini joka katsoo valitun rivin koordinaattien
+    ; tehdäänkö rutiini joka katsoo valitun rivin koordinaattien
     ; perusteella?
 
   Case #IDCMP_GADGETDOWN
@@ -627,7 +627,7 @@ Repeat
           ResetList people()
           SortList people(),SizeOf .person\listsort
 
-          ;; TAI StringSort joka toimii mys:
+          ;; TAI StringSort joka toimii myös:
           ;ResetList people()
           ;StringSort people(),SizeOf .person\listsort
 
@@ -813,8 +813,8 @@ Screen 1,28,"Koordinaatiston testiversio v 0.1 (25.6.1995) "+Chr$(169)+" Lauri O
 
 Window 2,0,0,640,512,$100|$800,"",0,1
 WCls #cwhite
-;Window 1,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tmn ikkunan kokoa",0,1
-;Window 1,0,0,640,512,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tmn ikkunan kokoa",0,1
+;Window 1,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tämän ikkunan kokoa",0,1
+;Window 1,0,0,640,512,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tämän ikkunan kokoa",0,1
 
 Gosub DrawCoordSystem
 
@@ -936,7 +936,7 @@ DrawCoords2
   WCls #cwhite
   WColour #cblack,#cwhite
 
-  USEPATH cwin                            ; piirretn koordinaatisto pikselin
+  USEPATH cwin                            ; piirretään koordinaatisto pikselin
 
   t=1
   t20=20
@@ -945,14 +945,14 @@ DrawCoords2
   t5=5
 
   Wline \x-t,\y-t15-t,\x-t,\h+t,\w+t5+t15+t,\h+t,#cblack ; vasemmalle ja alas jottei 0,0 kohta
-                                          ; tule koordinaatiston plle
+                                          ; tule koordinaatiston päälle
 
   Wline \x-t5-t,\y-t10-t,\x-t,\y-t15-t,\x+t5-t,\y-t10-t,#cblack  ; arrow for y axel
   Wline \w+t15+t,\h-t5+t,\w+t20+t,\h+t,\w+t15+t,\h+t5+t,#cblack
 
 
   For x=\x To \w Step cdistx*cxw
-    Wline x,\h+t,x,\h+5+t,#cblack       ; x-akselin koordinaattien vliviivat
+    Wline x,\h+t,x,\h+5+t,#cblack       ; x-akselin koordinaattien väliviivat
     num.q=wx2cx{x}                    ; ja numerot
     If Frac(num)<.5:num=Int(num):Else:num=Int(num)+1:EndIf
     numl.w=Len(Str$(num))*#fontw
@@ -964,7 +964,7 @@ DrawCoords2
     Print num
   Next
 
-  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien vliviivat
+  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien väliviivat
     Wline \x-t,y,\x-5-t,y,#cblack       ; ja numerot
     num.q=wy2cy{y}
     If Frac(num)<.5:num=Int(num):Else:num=Int(num)+1:EndIf
@@ -1106,9 +1106,9 @@ Return
     ;Print \luokka," ",day$(\twday)," ",\tdate,".",\tmonth,".",\tyear
     ;Print " ",\thour,":",\tmin," ",\minutes,"
     ;bodytext$=" Luokka: "+\luokka
-    ;bodytext$+" Pelipiv: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+    ;bodytext$+" Pelipäivä: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
     ;bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)
     ;bodytext$+" Aika: "+UStr$(\minutes)+" m "+UStr$(\seconds)+" s "
-    ;bodytext$+" Virheit: "+UStr$(\errors)
+    ;bodytext$+" Virheitä: "+UStr$(\errors)
   ;Next
 

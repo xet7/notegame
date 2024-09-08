@@ -319,7 +319,7 @@ End Statement
 ;    bodytext$+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
 ;    bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)+Chr$(10)
 ;    bodytext$+"Aika: "+UStr$(\minutes)+" min "+UStr$(\seconds)+" sek "+Chr$(10)
-;    bodytext$+"Virheit: "+UStr$(\errors)
+;    bodytext$+"Virheitä: "+UStr$(\errors)
 
 ;Statement getplayer2{}
 ;  SHARED symbolw,init,pen1,pen2,clockon,dummy,player$,luokka$
@@ -370,7 +370,7 @@ End Statement
 ;    sRet$=RTEZGetString(Title$,BodyText$,MaxChars.w)
 ;
 ;    If sRet$=""
-;      ret=RTEZRequest("Hupsis","Sinun tytyy kirjoittaa jotain!","Yritn uudestaan")
+;      ret=RTEZRequest("Hupsis","Sinun täytyy kirjoittaa jotain!","Yritän uudestaan")
 ;    Else
 ;      ;bodytext$="Kirjoitit '"+sRet$+"'"
 ;      ;ret=RTEZRequest("RTEZGetString",bodytext$,"I Sure Did")
@@ -436,7 +436,7 @@ For i=1 To 3:TextGadget picw\no,g(i)\x,g(i)\y,0,g(i)\id,g(i)\txt:Next
 
 Screen 1,0,0,640,256,3,$8000,screentitle$,pen1,pen2
 ;ILBMDepth,ILBMViewmode=Hires nolace!
-; 0,11,screentitle$ ; 3 bitplanes (=16 vri) + 8 (=hires) = 11
+; 0,11,screentitle$ ; 3 bitplanes (=16 väriä) + 8 (=hires) = 11
 
 ;For i=0 To 15:RGB i,0,0,0:Next
 Use Palette 0
@@ -548,20 +548,20 @@ EndIf
 Return
 
 .ohje
-bodytext$="Vrien merkitykset:"+Chr$(10)+Chr$(10)
-bodytext$+"PUNAINEN symboli = symbolilla ei ole nime"+Chr$(10)
-bodytext$+"VIHRE symboli   = symbolilla on nimi"+Chr$(10)+Chr$(10)
+bodytext$="Värien merkitykset:"+Chr$(10)+Chr$(10)
+bodytext$+"PUNAINEN symboli = symbolilla ei ole nimeä"+Chr$(10)
+bodytext$+"VIHREÄ symboli   = symbolilla on nimi"+Chr$(10)+Chr$(10)
 bodytext$+"Toiminta:"+Chr$(10)+Chr$(10)
-bodytext$+"Kun valitset symbolin, eteesi tulee tekstinsyttlaatikko,"+Chr$(10)
+bodytext$+"Kun valitset symbolin, eteesi tulee tekstinsyöttölaatikko,"+Chr$(10)
 bodytext$+"johon voit kirjoittaa symbolin nimen. Jos symbolilla on jo"+Chr$(10)
-bodytext$+"nimi, se nkyy tekstinsyttlaatikossa ja voit muuttaa sit."+Chr$(10)+Chr$(10)
+bodytext$+"nimi, se näkyy tekstinsyöttölaatikossa ja voit muuttaa sitä."+Chr$(10)+Chr$(10)
 bodytext$+"Jos haluamasi teksti ei sovi yhdelle riville kyselyruutuun,"+Chr$(10)
-bodytext$+"voit jakaa sen kahdelle riville \ merkill esim. nin:"+Chr$(10)+Chr$(10)
-bodytext$+"              TSS ON TOSI\PITK TEKSTI"+Chr$(10)+Chr$(10)
-bodytext$+"Symbolien numerointi menee vasemmalta oikealle ja ylhlt alas."+Chr$(10)
-bodytext$+"Kun tallennettaessa tulee kohdalle symboli, jolla ei ole nime,"+Chr$(10)
-bodytext$+"tallennus lopetetaan sen kohdalle, jolloin ylimriset symbolit"+Chr$(10)
-bodytext$+"eivt lataudu peliin."
+bodytext$+"voit jakaa sen kahdelle riville \ merkillä esim. näin:"+Chr$(10)+Chr$(10)
+bodytext$+"              TÄSSÄ ON TOSI\PITKÄ TEKSTI"+Chr$(10)+Chr$(10)
+bodytext$+"Symbolien numerointi menee vasemmalta oikealle ja ylhäältä alas."+Chr$(10)
+bodytext$+"Kun tallennettaessa tulee kohdalle symboli, jolla ei ole nimeä,"+Chr$(10)
+bodytext$+"tallennus lopetetaan sen kohdalle, jolloin ylimääräiset symbolit"+Chr$(10)
+bodytext$+"eivät lataudu peliin."
 
 ret=RTEZRequest("Ohje",bodytext$,"_OK")
 Return

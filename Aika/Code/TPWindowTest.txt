@@ -65,7 +65,7 @@ twin\x=10,20,600,200
 USEPATH twin
 
 Screen 0,27,"Koordinaatiston testiversio v 0.1 (25.6.1995) "+Chr$(169)+" Lauri Ojansivu"
-Window 0,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tmn ikkunan kokoa",0,1
+Window 0,\x,\y,\w,\h,$1|$2|$4|$8|$10|$20|$400|$1000,"Muuta tämän ikkunan kokoa",0,1
 
 Gosub DrawCoordSystem
 
@@ -125,10 +125,10 @@ DrawCoordSystem     ; ha, quess what this subroutine does ;)
   cxw=(cwin\w-cwin\x)/#numgames ;  = my coord width in window - my coord starting x coord
   cyh=(cwin\h-cwin\y)/maxtime   ; coord y height
 
-  USEPATH cwin                            ; piirretn koordinaatisto pikselin
+  USEPATH cwin                            ; piirretään koordinaatisto pikselin
 
   Wline \x-1,\y-16,\x-1,\h+1,\w+5+16,\h+1,#cblack ; vasemmalle ja alas jottei 0,0 kohta
-                                          ; tule koordinaatiston plle
+                                          ; tule koordinaatiston päälle
   t=1
   Wline \x-5-t,\y-10-t,\x-t,\y-15-t,\x+5-t,\y-10-t,#cblack  ; arrow for y axel
   Wline \w+15+t,\h-5+t,\w+20+t,\h+t,\w+15+t,\h+5+t,#cblack
@@ -136,14 +136,14 @@ DrawCoordSystem     ; ha, quess what this subroutine does ;)
 
 
   For x=\x To \w Step cdistx*cxw
-    Wline x,\h+1,x,\h+6,#cblack       ; x-akselin koordinaattien vliviivat
+    Wline x,\h+1,x,\h+6,#cblack       ; x-akselin koordinaattien väliviivat
     num.w=wx2cx{x}                    ; ja numerot
     numl.w=Len(Str$(num))*#fontw
     WLocate x-numl/2,\h+#fonth+1
     Print num
   Next
 
-  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien vliviivat
+  For y=\h To \y Step -cdisty*cyh     ; y-akselin koordinaattien väliviivat
     Wline \x-1,y,\x-6,y,#cblack       ; ja numerot
     num.w=wy2cy{y}
     numl.w=Len(Str$(num))*#fonth

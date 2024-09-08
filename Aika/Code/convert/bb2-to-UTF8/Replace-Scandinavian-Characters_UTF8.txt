@@ -1,0 +1,16 @@
+.bb2 (Blitz Basic 2 tokenized)
+=> Used AmiBlitz3 to save to .txt
+=> .txt has these scandinavian characters, maybe replace sometime:
+
+What is character set, when needing to convert ä to ä, Ä to Ä and ö to ö ?
+
+Create a custom mapping file: Save the following content to a file named amiga_to_utf8.txt
+
+0x1A 0xC3A4
+0x1D 0xC384
+0x1B 0xC3B6
+0x1C 0xC396
+
+
+iconv -f CUSTOM -t UTF-8 -c < inputfile.txt > outputfile.txt --byte-subst="<amiga_to_utf8.txt>"
+

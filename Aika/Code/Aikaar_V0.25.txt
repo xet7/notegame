@@ -1,5 +1,5 @@
 ; Aika-arvoja, Amigan koodi    Copyright Lauri Ojansivu
-;              idea & PC-koodi Copyright Tapio Prepalo
+;              idea & PC-koodi Copyright Tapio Pärepalo
 ;
 ; version 0.01 (23.11.-29.11.1994)
 ;
@@ -264,7 +264,7 @@
 ;   when note selected?)  & plays (piano) sample in right
 ;   freq when succeeded..
 ;
-; Svellajit:
+; Sävellajit:
 ; 1) select notes beginnig position from "piano-keyboard"
 ; 2) draw notes beginning from that note
 ; 3) some marks are wrong: green=wrong, red=right
@@ -706,7 +706,7 @@ End Statement
 
 Statement getplayer{}
   SHARED player$,luokka$,koulu$,people(),day$(),mon$(),p
-  updatetitle{koulu$}  ; Koulun nimi ala-aste nkyviin
+  updatetitle{koulu$}  ; Koulun nimi ala-aste näkyviin
   bodytext$="Kirjoita nimesi"+Chr$(10)
   bodytext$+"(korkeintaan 30 kirjainta)"
   player$=""
@@ -746,10 +746,10 @@ Statement getplayer{}
     USEPATH p
     bodytext$="  Pelaaja: "+player$+Chr$(10)
     bodytext$+"   Luokka: "+\luokka+Chr$(10)
-    bodytext$+"Pelipiv: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
+    bodytext$+"Pelipäivä: "+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
     bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)+Chr$(10)+Chr$(10)
     bodytext$+"     Aika: "+UStr$(\minutes)+" min "+UStr$(\seconds)+" sek "+Chr$(10)
-    bodytext$+" Virheit: "+UStr$(\errors)
+    bodytext$+" Virheitä: "+UStr$(\errors)
     ret=RTEZRequest("Edelliset tulokset",bodytext$,"Aloita peli")
     \luokka="",0,0,0,0,0,0,0,0,0
   EndIf
@@ -760,7 +760,7 @@ End Statement
 ;    bodytext$+day$(\twday)+" "+UStr$(\tdate)+"."+UStr$(\tmonth)+"."+UStr$(\tyear)
 ;    bodytext$+" klo "+UStr$(\thour)+":"+UStr$(\tmin)+Chr$(10)
 ;    bodytext$+"Aika: "+UStr$(\minutes)+" min "+UStr$(\seconds)+" sek "+Chr$(10)
-;    bodytext$+"Virheit: "+UStr$(\errors)
+;    bodytext$+"Virheitä: "+UStr$(\errors)
 
 ;Statement getplayer2{}
 ;  SHARED symbolw,init,pen1,pen2,clockon,dummy,player$,luokka$
@@ -811,7 +811,7 @@ End Statement
 ;    sRet$=RTEZGetString(Title$,BodyText$,MaxChars.w)
 ;
 ;    If sRet$=""
-;      ret=RTEZRequest("Hupsis","Sinun tytyy kirjoittaa jotain!","Yritn uudestaan")
+;      ret=RTEZRequest("Hupsis","Sinun täytyy kirjoittaa jotain!","Yritän uudestaan")
 ;    Else
 ;      ;bodytext$="Kirjoitit '"+sRet$+"'"
 ;      ;ret=RTEZRequest("RTEZGetString",bodytext$,"I Sure Did")
@@ -856,7 +856,7 @@ BitMap #rgbitmap,#sw,#sh,3
 
 Screen 1,0,0,640,256,3,$8000,screentitle$,pen1,pen2
 ;ILBMDepth,ILBMViewmode=Hires nolace!
-; 0,11,screentitle$ ; 3 bitplanes (=16 vri) + 8 (=hires) = 11
+; 0,11,screentitle$ ; 3 bitplanes (=16 väriä) + 8 (=hires) = 11
 
 ;For i=0 To 15:RGB i,0,0,0:Next
 Use Palette 0
@@ -1111,7 +1111,7 @@ Return
     updatetext{"MAALI !"}
 
     BodyText$="    Aika: "+Str$(minutes)+" Min "+Str$(seconds)+" sek "+Chr$(10)
-    BodyText$+"Virheit: "+Str$(errors)
+    BodyText$+"Virheitä: "+Str$(errors)
     ret=RTEZRequest("Tulokset",BodyText$,"OK")
 
     USEPATH p
@@ -1560,11 +1560,11 @@ Data$ Sunnuntai,Maanantai,Tiistai,Keskiviikko,Torstai,Perjantai,Lauantai
       ;score$=Right$(\info[1],#scorelen)
       ;bodytext$=\info[0]+" "+rluokka$+" tulokset "+Str$(rtdate)+"."+Str$(rtmonth)+"."+Str$(rtyear)+Chr$(10)+Chr$(10)
       ;bodytext$+"Aika: "+Str$(rminutes)+" min "+Str$(rseconds)+" sek."
-      ;bodytext$+"Virheit: "+Str$(rerrors)
+      ;bodytext$+"Virheitä: "+Str$(rerrors)
 
       ;bodytext$=\info[0]+" "+luokka$+" tulokset "+Str$(tdate)+"."+Str$(tmonth)+"."+Str$(tyear)+Chr$(10)+Chr$(10)
       ;bodytext$+"Aika: "+Str$(minutes)+" min "+Str$(seconds)+" sek."
-      ;bodytext$+"Virheit: "+Str$(errors)
+      ;bodytext$+"Virheitä: "+Str$(errors)
 
 
 

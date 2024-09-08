@@ -1,8 +1,0 @@
-.bb2 (Blitz Basic 2 tokenized)
-=> Used AmiBlitz3 to save to .txt
-=> .txt has these scandinavian characters, maybe replace sometime:
-
-
- => ä
- => Ä
- => ö
